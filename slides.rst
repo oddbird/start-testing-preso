@@ -3,6 +3,7 @@
 :description: a presentation for PyCon US 2013
 :keywords: presentation, python, testing, pycon
 :css: css/oddbird.css
+:css: css/highlight.css
 
 :skip-help: true
 
