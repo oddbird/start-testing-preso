@@ -35,12 +35,15 @@ GEM
       compass (>= 0.12.1)
       sass (>= 3.2.0)
     chunky_png (1.2.7)
+    ffi (1.4.0)
     listen (0.7.3)
     modular-scale (1.0.6)
       compass (>= 0.12.1)
       sass (>= 3.2.0)
       sassy-math (>= 1.5)
     rb-fsevent (0.9.3)
+    rb-inotify (0.9.0)
+      ffi (>= 0.5.0)
     sass (3.2.6)
     sassy-math (1.5)
       compass (~> 0.11)
@@ -56,5 +59,6 @@ DEPENDENCIES
   compass!
   modular-scale (~> 1.0.2)
   rb-fsevent (~> 0.9.1)
+  rb-inotify (~> 0.9)
   sass (~> 3.2.1)
   susy!
