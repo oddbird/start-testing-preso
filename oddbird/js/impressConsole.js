@@ -260,6 +260,7 @@
             // Register the event
             root.addEventListener('impress:stepleave', onStepLeave);
             root.addEventListener('impress:stepenter', onStepEnter);
+            root.addEventListener('impress:innerstep', onStepEnter);
             
             //When the window closes, clean up after ourselves.
             window.onunload = function(){
