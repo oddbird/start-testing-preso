@@ -1,6 +1,6 @@
 :title: Getting started testing
 :author: Carl Meyer
-:description: a presentation for PyCon US 2013
+:description: a presentation on getting started testing, for PyCon US 2013
 :keywords: presentation, python, testing, pycon
 :css: css/highlight.css
 :css: css/oddbird.css
@@ -18,16 +18,9 @@ Getting started testing
 
 |hcard|
 
-.. |hcard| raw:: html
+.. note::
 
-  <div class="vcard">
-  <img src="images/template/logo.svg" alt="OddBird" class="logo" />
-  <h2 class="fn">Carl Meyer</h2>
-  <ul class="links">
-    <li><a href="http://www.oddbird.net" class="org url">oddbird.net</a></li>
-    <li><a href="https://twitter.com/carljm" rel="me">@carljm</a></li>
-  </ul>
-  </div>
+   Some presenter notes.
 
 ----
 
@@ -108,3 +101,24 @@ And some additional text underneath it.
 .. image:: images/exam.jpg
    :width: 1024px
    :height: 768px
+
+
+----
+
+:id: questions
+
+Questions?
+==========
+
+|hcard|
+
+.. |hcard| raw:: html
+
+  <div class="vcard">
+  <img src="images/template/logo.svg" alt="OddBird" class="logo" />
+  <h2 class="fn">Carl Meyer</h2>
+  <ul class="links">
+    <li><a href="http://www.oddbird.net" class="org url">oddbird.net</a></li>
+    <li><a href="https://twitter.com/carljm" rel="me">@carljm</a></li>
+  </ul>
+  </div>
