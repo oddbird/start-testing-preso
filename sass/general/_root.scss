@@ -1,0 +1,31 @@
+// ----------------------------------------------------------------------------
+// Imports
+
+@import "compass/reset";
+@import "fonts";
+
+// ----------------------------------------------------------------------------
+// Root
+
+$bg     : color($blue lightest,.25);
+$noise  : image-url('template/noise.png');
+$angle  : to top;
+$grad   : color($blue light,.25), color($blue lightest,.25) 75%;
+
+@include establish-baseline;
+@include border-box-sizing;
+
+html {
+  @include serif;
+  @include text-shadow;
+  @include background(convert-gradient($angle, $grad...) no-repeat, $noise repeat fixed);
+  background: linear-gradient($angle, $grad...) no-repeat, $noise repeat fixed;
+  height: 100%;
+  color: $base;
+}
+
+// ----------------------------------------------------------------------------
+// More
+
+@import "type";
+@import "icons";

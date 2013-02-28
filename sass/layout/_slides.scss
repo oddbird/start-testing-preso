@@ -1,0 +1,46 @@
+// ----------------------------------------------------------------------------
+// Mixins
+
+@mixin section($color: rgba($orange-light,.1)) {
+  position: relative;
+  &:before, &:after {
+    @include stretch-y;
+    content: " ";
+    left: - 100%;
+    right: - 100%;
+    padding: {
+      left: 100%;
+      right: 100%;
+    }
+    background: $color;
+    z-index: -1;
+  }
+  &:before { @include rotate(2deg); }
+  &:after { @include rotate(-2deg); }
+}
+
+// ----------------------------------------------------------------------------
+// Layout
+
+.vcard {
+  .logo{
+    @include span-columns(4);
+    @include push(2);
+  }
+  .fn, .links {
+    @include span-columns(6 omega);
+  }
+  .fn {
+    @include padding-leader(.25);
+    @include trailer(0);
+  }
+  .links {
+    list-style: none;
+    a:before { margin-right: .4em; }
+  }
+
+  [href*="twitter"] {
+    @extend %icon;
+    @extend %icon-twitter;
+  }
+}

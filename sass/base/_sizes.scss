@@ -1,0 +1,31 @@
+// ----------------------------------------------------------------------------
+// Defaults
+
+$base-size    : 24px;
+$ratio        : minor-third() fifth();
+
+// ----------------------------------------------------------------------------
+// Variants
+
+$normpx       : $base-size;
+$medpx        : ms(1);
+$smallpx      : ms(-1);
+$xsmallpx     : ms(-2);
+$xxsmallpx    : ms(-3);
+$xxxsmallpx   : ms(-4);
+$largepx      : ms(2);
+$xlargepx     : ms(3);
+$xxlargepx    : ms(5);
+$xxxlargepx   : ms(8);
+
+// ----------------------------------------------------------------------------
+// Font Sizes
+
+$base-font-size             : $normpx;
+$base-line-height           : $medpx;
+
+$rhythm-unit                : rem;
+$rem-with-px-fallback       : true;
+
+$relative-font-sizing       : true;
+$round-to-nearest-half-line : true;

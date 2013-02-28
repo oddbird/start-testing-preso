@@ -2,8 +2,8 @@
 :author: Carl Meyer
 :description: a presentation for PyCon US 2013
 :keywords: presentation, python, testing, pycon
-:css: css/oddbird.css
 :css: css/highlight.css
+:css: css/oddbird.css
 
 :skip-help: true
 
@@ -16,15 +16,18 @@
 Getting started testing
 =======================
 
-* Carl Meyer
-* `oddbird.net`_
-* `@carljm`_
+|hcard|
 
-.. image:: images/logo.png
+.. |hcard| raw:: html
 
-.. _oddbird.net: http://www.oddbird.net
-.. _@carljm: https://twitter.com/carljm
-
+  <div class="vcard">
+  <img src="images/template/logo.svg" alt="OddBird" class="logo" />
+  <h2 class="fn">Carl Meyer</h2>
+  <ul class="links">
+    <li><a href="http://www.oddbird.net" class="org url">oddbird.net</a></li>
+    <li><a href="https://twitter.com/carljm" rel="me">@carljm</a></li>
+  </ul>
+  </div>
 
 ----
 
