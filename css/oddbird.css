@@ -151,8 +151,8 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
 }
 
 html {
-  font-size: 150%;
-  line-height: 1.20833em;
+  font-size: 200%;
+  line-height: 1.1875em;
 }
 
 * {
@@ -191,9 +191,9 @@ a:focus, a:hover, a:active {
 }
 
 h1 {
-  font-size: 3rem;
-  line-height: 3.625rem;
-  margin-bottom: 0.60417rem;
+  font-size: 2.0625rem;
+  line-height: 2.375rem;
+  margin-bottom: 0.59375rem;
   font-weight: bold;
 }
 h1 a:link, h1 a:visited {
@@ -207,14 +207,14 @@ h1:only-child {
 }
 
 h2 {
-  font-size: 1.45833rem;
-  line-height: 1.8125rem;
-  margin-bottom: 0.60417rem;
+  font-size: 1.1875rem;
+  line-height: 1.78125rem;
+  margin-bottom: 0.59375rem;
   font-weight: bold;
 }
 
 h3 {
-  margin-bottom: 0.60417rem;
+  margin-bottom: 0.59375rem;
 }
 
 h3, h4, strong {
@@ -226,7 +226,7 @@ em {
 }
 
 p, ul, ol, pre {
-  margin-bottom: 1.20833rem;
+  margin-bottom: 1.1875rem;
 }
 
 ul {
@@ -239,26 +239,26 @@ ol {
 
 code, .code {
   font-family: Consolas, Menlo, Monaco, "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", monospace, serif;
-  font-size: 0.66667rem;
-  line-height: 1.20833rem;
+  font-size: 0.65625rem;
+  line-height: 1.1875rem;
 }
 
 code {
   display: inline-block;
-  padding: 0 0.30208rem;
+  padding: 0 0.29688rem;
   background: rgba(0, 114, 153, 0.125);
 }
 
 .code {
-  line-height: 0.90625rem;
-  margin-bottom: 1.20833rem;
+  line-height: 0.89063rem;
+  margin-bottom: 1.1875rem;
   -webkit-box-shadow: #265f73 0 0 0.25em inset;
   -moz-box-shadow: #265f73 0 0 0.25em inset;
   box-shadow: #265f73 0 0 0.25em inset;
   overflow: auto;
-  margin-left: -0.90625rem;
-  padding: 0.60417rem;
-  border-left: 0.30208rem solid rgba(0, 38, 50, 0.25);
+  margin-left: -0.89063rem;
+  padding: 0.59375rem;
+  border-left: 0.29688rem solid rgba(0, 38, 50, 0.25);
 }
 
 img {
@@ -289,6 +289,10 @@ img {
   content: "\e003";
 }
 
+#title h1 {
+  text-align: center;
+}
+
 .vcard .logo {
   width: 31.1828%;
   float: left;
@@ -301,7 +305,6 @@ img {
   margin-right: 0;
 }
 .vcard .fn {
-  padding-top: 0.30208rem;
   margin-bottom: 0rem;
 }
 .vcard .links {

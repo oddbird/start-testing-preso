@@ -22,6 +22,10 @@
 // ----------------------------------------------------------------------------
 // Layout
 
+#title {
+  h1 { text-align: center; }
+}
+
 .vcard {
   .logo{
     @include span-columns(4);
@@ -31,7 +35,6 @@
     @include span-columns(6 omega);
   }
   .fn {
-    @include padding-leader(.25);
     @include trailer(0);
   }
   .links {

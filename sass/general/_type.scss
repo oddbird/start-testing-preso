@@ -22,7 +22,7 @@ a {
 // Type
 
 h1 {
-  @include adjust-font-size-to($xxxlargepx);
+  @include adjust-font-size-to($xxlargepx);
   @include trailer(.5);
   font-weight: bold;
   a {
@@ -33,7 +33,7 @@ h1 {
 }
 
 h2 {
-  @include adjust-font-size-to($largepx);
+  @include adjust-font-size-to($medpx);
   @include trailer(.5);
   font-weight: bold;
 }
