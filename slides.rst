@@ -103,6 +103,8 @@ And some additional text underneath it.
 
 ----
 
-:data-fullscreen: 1
+:data-fullwidth: 1
 
 .. image:: images/exam.jpg
+   :width: 1024px
+   :height: 768px

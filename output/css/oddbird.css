@@ -313,3 +313,7 @@ img {
 .vcard .links a:before {
   margin-right: .4em;
 }
+
+.step[data-fullwidth="1"] {
+  width: 1024px;
+}

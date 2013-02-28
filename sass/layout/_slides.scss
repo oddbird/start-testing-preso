@@ -47,3 +47,7 @@
     @extend %icon-twitter;
   }
 }
+
+.step[data-fullwidth="1"] {
+  width: 1024px;
+}
