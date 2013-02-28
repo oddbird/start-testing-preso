@@ -1,0 +1,3 @@
+#!/bin/bash
+
+bin/react.py -c "hovercraft slides.rst output" css/ fonts/ images/ slides.rst
