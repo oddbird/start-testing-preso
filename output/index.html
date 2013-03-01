@@ -22,15 +22,19 @@ do.</p><p>(It's been done already. Oh well.)</p></div></div><div class="step" st
     Score is Jaccard index (intersection / union).
 
     """</span>
-    <span class="n">intersection</span> <span class="o">=</span> <span class="n">watched1</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">watched2</span><span class="p">)</span>
-    <span class="n">union</span> <span class="o">=</span> <span class="n">watched1</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">watched2</span><span class="p">)</span>
+    <span class="n">intersection</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">watched1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">repo</span> <span class="ow">in</span> <span class="n">watched2</span><span class="p">:</span>
+            <span class="n">intersection</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">union</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">watched1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">watched2</span><span class="p">)</span> <span class="o">-</span> <span class="n">intersection</span>
 
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="p">)</span></pre></div><div class="step" step="6" data-x="9600" data-y="0"><pre class="highlight code python"><span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">watched1</span><span class="p">,</span> <span class="n">watched2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">intersection</span><span class="p">)</span> <span class="o">/</span> <span class="n">union</span></pre></div><div class="step" step="6" data-x="9600" data-y="0"><pre class="highlight code python"><span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">watched1</span><span class="p">,</span> <span class="n">watched2</span><span class="p">):</span>
     <span class="sd">"""
-    Return similarity score between users watching given sets of repos.
+    Similarity score between users.
 
-    The similarity score is the Jaccard index (size of intersection / size of
-    union); it varies between 0 (no similarity) and 1 (identical sets).
+    Users represented as list of watched repos.
+
+    Score is Jaccard index (intersection / union).
 
     """</span>
     <span class="n">intersection</span> <span class="o">=</span> <span class="n">watched1</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">watched2</span><span class="p">)</span>

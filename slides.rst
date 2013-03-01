@@ -120,11 +120,13 @@ Let's make a thing!
         Score is Jaccard index (intersection / union).
 
         """
-        intersection = watched1.intersection(watched2)
-        union = watched1.union(watched2)
+        intersection = 0
+        for repo in watched1:
+            if repo in watched2:
+                intersection += 1
+        union = len(watched1) + len(watched2) - intersection
 
-        return float(len(intersection)) / len(union)
-
+        return float(intersection) / union
 
 ----
 
@@ -132,17 +134,17 @@ Let's make a thing!
 
     def similarity(watched1, watched2):
         """
-        Return similarity score between users watching given sets of repos.
+        Similarity score between users.
 
-        The similarity score is the Jaccard index (size of intersection / size of
-        union); it varies between 0 (no similarity) and 1 (identical sets).
+        Users represented as list of watched repos.
+
+        Score is Jaccard index (intersection / union).
 
         """
         intersection = watched1.intersection(watched2)
         union = watched1.union(watched2)
 
         return float(len(intersection)) / len(union)
-
 
 ----
 
