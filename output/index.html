@@ -1,11 +1,30 @@
 <!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml"><head><title>Getting started testing</title><meta name="generator" content="Hovercraft! 1.0 http://regebro.github.com/hovercraft"></meta><meta name="author" content="Carl Meyer"></meta><meta name="description" content="a presentation on getting started testing, for PyCon US 2013"></meta><meta name="keywords" content="presentation, python, testing, pycon"></meta><link rel="stylesheet" href="css/hovercraft.css" media="all"></link><link rel="stylesheet" href="css/impressConsole.css" media="all"></link><link rel="stylesheet" href="css/highlight.css" media="all"></link><link rel="stylesheet" href="css/oddbird.css" media="all"></link></head><body class="impress-not-supported"><div id="impress"><div class="step" step="0" id="title" data-x="0" data-y="0"><h1 id="getting-started-testing">Getting started testing</h1><p><div class="vcard">
-<img src="images/logo.svg" alt="OddBird" class="logo" />
+<a href="http://www.oddbird.net">
+  <img src="images/logo.svg" alt="OddBird" class="logo" />
+</a>
 <h2 class="fn">Carl Meyer</h2>
 <ul class="links">
   <li><a href="http://www.oddbird.net" class="org url">oddbird.net</a></li>
   <li><a href="https://twitter.com/carljm" rel="me">@carljm</a></li>
 </ul>
-</div></p></div><div class="step" step="1" data-reveal="1" data-x="1600" data-y="0"><h1 id="where-we-re-headed">Where we're headed</h1><ul><li>From manual testing to automated</li><li>Another bullet point.</li></ul></div><div class="step" step="2" data-x="3200" data-y="0"><pre class="highlight code python"><span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">watched1</span><span class="p">,</span> <span class="n">watched2</span><span class="p">):</span>
+</div></p></div><div class="step" step="1" id="thistalk" data-reveal="1" data-x="1600" data-y="0"><h1 id="a-little-talk-about-testing">A little talk about testing</h1><ul><li>Why?</li><li>How?</li><li>When?</li><li>How much?</li><li>What if...?</li></ul><p><img src="images/lightbulb.svg" alt="light bulb" class="innerStep" height="300px" /></p><div class="notes"><p>Here's the plan for the next half hour: we'll talk about why to write tests,
+how to write them, when to write them, how many to write, and a few "what
+if?" scenarios and how to handle them.</p><p>Hopefully by the end the testing lightbulb will go off (if it hasn't
+already), and you'll be so hooked you won't even be able to sleep tonight
+until you've written a bunch of tests.</p></div></div><div class="step" step="2" data-reveal="1" data-x="3200" data-y="0"><h1 id="me">Me</h1><ul><li>Writing Python since 2002.</li><li>Professionally since 2007.</li><li>Writing a lot of tests since 2009.</li><li>Mostly web development.</li></ul><p><a href="http://www.oddbird.net" class="innerStep">
+  <img src="images/logo.svg" alt="OddBird" class="logo" />
+</a></p><div class="notes"><p>A very brief story about me, Python, and testing...</p><p>I like to write tests.</p><p>I mostly do web development, but I've tried to keep this talk general.</p><p>You can hire us!</p></div></div><div class="step" step="3" data-x="4800" data-y="0"><p>Let's make a thing!</p><div class="notes"><p>A GitHub recommendation engine!</p><p>Find the projects you ought to know about, but don't yet!</p><p>(It's been done. Oh well.)</p></div><pre class="highlight code python"><span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">watched1</span><span class="p">,</span> <span class="n">watched2</span><span class="p">):</span>
+    <span class="sd">"""
+    Similarity score between users watching given lists of repos.
+
+    The similarity score is the Jaccard index (size of intersection / size of
+    union); it varies between 0 (no similarity) and 1 (identical sets).
+
+    """</span>
+    <span class="n">intersection</span> <span class="o">=</span> <span class="n">watched1</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">watched2</span><span class="p">)</span>
+    <span class="n">union</span> <span class="o">=</span> <span class="n">watched1</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">watched2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="p">)</span></pre></div><div class="step" step="4" data-x="6400" data-y="0"><pre class="highlight code python"><span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">watched1</span><span class="p">,</span> <span class="n">watched2</span><span class="p">):</span>
     <span class="sd">"""
     Return similarity score between users watching given sets of repos.
 
@@ -16,28 +35,24 @@
     <span class="n">intersection</span> <span class="o">=</span> <span class="n">watched1</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">watched2</span><span class="p">)</span>
     <span class="n">union</span> <span class="o">=</span> <span class="n">watched1</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">watched2</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="p">)</span></pre></div><div class="step" step="3" data-x="4800" data-y="0"><pre class="highlight code python"><span class="err">$</span> <span class="n">python</span>
-<span class="n">Python</span> <span class="mf">3.3</span><span class="o">.</span><span class="mi">0</span> <span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">Feb</span> <span class="mi">11</span> <span class="mi">2013</span><span class="p">,</span> <span class="mi">20</span><span class="p">:</span><span class="mi">11</span><span class="p">:</span><span class="mi">18</span><span class="p">)</span>
-<span class="p">[</span><span class="n">GCC</span> <span class="mf">4.6</span><span class="o">.</span><span class="mi">3</span><span class="p">]</span> <span class="n">on</span> <span class="n">linux</span>
-<span class="n">Type</span> <span class="s">"help"</span><span class="p">,</span> <span class="s">"copyright"</span><span class="p">,</span> <span class="s">"credits"</span> <span class="ow">or</span> <span class="s">"license"</span> <span class="k">for</span> <span class="n">more</span> <span class="n">information</span><span class="o">.</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">ghre.similarity</span> <span class="kn">import</span> <span class="n">similarity_score</span>
-
-<span class="o">&gt;&gt;&gt;</span> <span class="n">similarity_score</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">},</span> <span class="p">{</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">})</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="p">)</span></pre></div><div class="step" step="5" data-x="8000" data-y="0"><pre class="highlight code python"><span class="o">&gt;&gt;&gt;</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">},</span> <span class="p">{</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">})</span>
 <span class="mf">0.3333333333333333</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="n">similarity_score</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">},</span> <span class="p">{</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">})</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">},</span> <span class="p">{</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">})</span>
 <span class="mf">0.5</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="n">similarity_score</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">},</span> <span class="p">{</span><span class="s">'d'</span><span class="p">})</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">},</span> <span class="p">{</span><span class="s">'d'</span><span class="p">})</span>
 <span class="mf">0.0</span>
 
-<span class="o">&gt;&gt;&gt;</span> <span class="n">similarity_score</span><span class="p">(</span><span class="nb">set</span><span class="p">(),</span> <span class="nb">set</span><span class="p">())</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">similarity</span><span class="p">(</span><span class="nb">set</span><span class="p">(),</span> <span class="nb">set</span><span class="p">())</span>
 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
   <span class="n">File</span> <span class="s">"&lt;stdin&gt;"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
   <span class="n">File</span> <span class="s">"./ghre/similarity.py"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">12</span><span class="p">,</span> <span class="ow">in</span> <span class="n">similarity_score</span>
     <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="p">)</span>
-<span class="ne">ZeroDivisionError</span><span class="p">:</span> <span class="nb">float</span> <span class="n">division</span> <span class="n">by</span> <span class="n">zero</span></pre></div><div class="step" step="4" id="questions" data-x="6400" data-y="0"><h1 id="questions">Questions?</h1><p><div class="vcard">
-<img src="images/logo.svg" alt="OddBird" class="logo" />
+<span class="ne">ZeroDivisionError</span><span class="p">:</span> <span class="nb">float</span> <span class="n">division</span> <span class="n">by</span> <span class="n">zero</span></pre></div><div class="step" step="6" id="questions" data-x="9600" data-y="0"><h1 id="questions">Questions?</h1><ul><li><a href="http://oddbird.github.com/start-testing">oddbird.github.com/start-testing</a></li><li><a href="http://pytest.org/">pytest.org</a></li><li><a href="http://nedbatchelder.com/code/coverage/">nedbatchelder.com/code/coverage/</a></li><li><a href="http://www.voidspace.org.uk/python/mock/">www.voidspace.org.uk/python/mock/</a></li><li><a href="http://tox.readthedocs.org">tox.readthedocs.org</a></li><li><a href="http://webtest.pythonpaste.org">webtest.pythonpaste.org</a></li></ul><p><div class="vcard">
+<a href="http://www.oddbird.net">
+  <img src="images/logo.svg" alt="OddBird" class="logo" />
+</a>
 <h2 class="fn">Carl Meyer</h2>
 <ul class="links">
   <li><a href="http://www.oddbird.net" class="org url">oddbird.net</a></li>

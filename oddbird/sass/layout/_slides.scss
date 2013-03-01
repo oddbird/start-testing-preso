@@ -27,6 +27,8 @@
 }
 
 .vcard {
+  @include leader(1);
+
   .logo{
     @include span-columns(4);
     @include push(2);
@@ -67,3 +69,9 @@
   opacity: 0;
   &.stepped { @include animation(fadeInLeft 300ms both); }
 }
+
+#thistalk {
+  > ul { float: left; }
+  img { float: right; margin: 100px 50px; }
+}
+
