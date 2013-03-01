@@ -28,8 +28,6 @@ Where we're headed
 
 ----
 
-:data-x: r1000
-
 .. code:: python
 
     def similarity(watched1, watched2):

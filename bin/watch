@@ -1,3 +1,3 @@
 #!/bin/bash
 
-bin/react.py -c "bin/build" oddbird/ images/ slides.rst
+bundle exec guard
