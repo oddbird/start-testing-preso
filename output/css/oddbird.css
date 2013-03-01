@@ -164,12 +164,12 @@ html {
 html {
   font-family: "BaskervilleFS", Baskerville, Palatino, Cambria, Georgia, serif;
   text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
-  background: -webkit-gradient(linear, 50% 100%, 50% 0%, color-stop(0%, rgba(51, 203, 255, 0.25)), color-stop(75%, rgba(204, 242, 255, 0.25))) no-repeat, url('../images/template/noise.png?1362027582') repeat fixed;
-  background: -webkit-linear-gradient(bottom, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/template/noise.png?1362027582') repeat fixed;
-  background: -moz-linear-gradient(bottom, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/template/noise.png?1362027582') repeat fixed;
-  background: -o-linear-gradient(bottom, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/template/noise.png?1362027582') repeat fixed;
-  background: linear-gradient(bottom, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/template/noise.png?1362027582') repeat fixed;
-  background: linear-gradient(to top, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/template/noise.png?1362027582') repeat fixed;
+  background: -webkit-gradient(linear, 50% 100%, 50% 0%, color-stop(0%, rgba(51, 203, 255, 0.25)), color-stop(75%, rgba(204, 242, 255, 0.25))) no-repeat, url('../images/noise.png?1362027582') repeat fixed;
+  background: -webkit-linear-gradient(bottom, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/noise.png?1362027582') repeat fixed;
+  background: -moz-linear-gradient(bottom, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/noise.png?1362027582') repeat fixed;
+  background: -o-linear-gradient(bottom, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/noise.png?1362027582') repeat fixed;
+  background: linear-gradient(bottom, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/noise.png?1362027582') repeat fixed;
+  background: linear-gradient(to top, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/noise.png?1362027582') repeat fixed;
   height: 100%;
   color: #265f73;
 }
@@ -231,10 +231,16 @@ p, ul, ol, pre {
 
 ul {
   list-style: disc;
+  margin-top: 0.59375rem;
 }
 
 ol {
   list-style: decimal-leading-zero;
+  margin-top: 0.59375rem;
+}
+
+li {
+  margin-bottom: 0.59375rem;
 }
 
 code, .code {
@@ -313,7 +319,21 @@ img {
 .vcard .links a:before {
   margin-right: .4em;
 }
+.vcard li {
+  margin-bottom: 0rem;
+}
+.vcard ul {
+  margin-top: 0rem;
+}
 
 .step[data-fullwidth="1"] {
   width: 1024px;
+}
+
+.innerStep {
+  opacity: 0;
+}
+
+.innerStep.stepped {
+  opacity: 1;
 }

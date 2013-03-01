@@ -326,6 +326,7 @@
                            scale(step.scale),
                 transformStyle: "preserve-3d"
             });
+            
         };
         
         // `init` API function that initializes (and runs) the presentation.
@@ -553,15 +554,33 @@
             var prev = steps.indexOf( activeStep ) - 1;
             prev = prev >= 0 ? steps[ prev ] : steps[ steps.length-1 ];
             
+            // when backing through a slide, clear its inner steps
+            $$('.innerStep.stepped', activeStep).forEach( function (elem) {
+                elem.classList.remove('stepped');
+            });
+            
             return goto(prev);
+        };
+        
+        var inner = {
+            next: function () {
+                var innerNext = activeStep.querySelectorAll('.innerStep:not(.stepped)')[0];
+                innerNext.classList.add('stepped');
+            }
         };
         
         // `next` API function goes to next step (in document order)
         var next = function () {
-            var next = steps.indexOf( activeStep ) + 1;
-            next = next < steps.length ? steps[ next ] : steps[ 0 ];
+            // if there are unshown inner steps, show next one instead of next slide
+            if(activeStep.querySelectorAll('.innerStep:not(.stepped)').length) {
+                inner.next();
+                triggerEvent(activeStep, "impress:innerstep");
+            } else {
+                var next = steps.indexOf( activeStep ) + 1;
+                next = next < steps.length ? steps[ next ] : steps[ 0 ];
             
-            return goto(next);
+                return goto(next);
+            }
         };
         
         // Adding some useful classes to step elements.
