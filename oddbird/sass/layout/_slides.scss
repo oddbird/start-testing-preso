@@ -20,7 +20,7 @@
 }
 
 // ----------------------------------------------------------------------------
-// Layout
+// Title
 
 #title, #questions {
   h1 { text-align: center; }
@@ -56,9 +56,14 @@
   }
 }
 
-.step[data-fullwidth="1"] {
-  width: 1024px;
-}
+// ----------------------------------------------------------------------------
+// Steps
 
-.innerStep { opacity: 0; }
-.innerStep.stepped { opacity: 1; }
+@include animate;
+
+.step[data-fullwidth="1"] { width: 1024px; }
+
+.innerStep {
+  opacity: 0;
+  &.stepped { @include animation(fadeInLeft 300ms both); }
+}
