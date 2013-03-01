@@ -47,9 +47,14 @@ p, ul, ol, pre { @include trailer; }
 
 ul {
   list-style: disc;
+  @include leader(.5);
 }
 ol {
   list-style: decimal-leading-zero;
+  @include leader(.5);
+}
+li {
+  @include trailer(.5);
 }
 
 code, .code {

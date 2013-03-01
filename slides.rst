@@ -2,14 +2,11 @@
 :author: Carl Meyer
 :description: a presentation on getting started testing, for PyCon US 2013
 :keywords: presentation, python, testing, pycon
-:css: css/highlight.css
-:css: css/oddbird.css
 
 :skip-help: true
 
 
 ----
-
 
 :id: title
 
@@ -18,14 +15,20 @@ Getting started testing
 
 |hcard|
 
-.. note::
+----
 
-   Some presenter notes.
+:data-reveal: 1
+
+Where we're headed
+------------------
+
+* From manual testing to automated
+
+* Another bullet point.
 
 ----
 
-A simple function
------------------
+:data-x: r1000
 
 .. code:: python
 
@@ -73,38 +76,6 @@ A simple function
 
 ----
 
-This is a bulleted list:
-
-* One item here.
-
-* Another here.
-
-* And a third that is long enough to perhaps wrap to another line.
-
-----
-
-This slide has only a subtitle
-------------------------------
-
-----
-
-This slide has a subtitle
--------------------------
-
-And some additional text underneath it.
-
-
-----
-
-:data-fullwidth: 1
-
-.. image:: images/exam.jpg
-   :width: 1024px
-   :height: 768px
-
-
-----
-
 :id: questions
 
 Questions?
@@ -115,7 +86,7 @@ Questions?
 .. |hcard| raw:: html
 
   <div class="vcard">
-  <img src="images/template/logo.svg" alt="OddBird" class="logo" />
+  <img src="images/logo.svg" alt="OddBird" class="logo" />
   <h2 class="fn">Carl Meyer</h2>
   <ul class="links">
     <li><a href="http://www.oddbird.net" class="org url">oddbird.net</a></li>
