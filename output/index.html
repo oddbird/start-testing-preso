@@ -13,9 +13,9 @@ large untested codebase.</li></ul><p>Hopefully by the end the testing lightbulb 
 already), and you'll be so hooked you won't even be able to sleep tonight
 until you've written a bunch of tests.</p></div></div><div class="step" step="2" data-reveal="1" data-x="3200" data-y="0"><h1 id="me">Me</h1><ul><li>Writing Python since 2002.</li><li>Professionally since 2007.</li><li>Writing a lot of tests since 2009.</li><li>Mostly web development.</li></ul><div class="notes"><p>A very brief story about me, Python, and testing...</p><p>I like to write tests. Even this slide deck has tests!</p><p>I mostly do web development, but I've tried to keep this talk general.</p></div></div><div class="step" step="3" data-x="4800" data-y="0"><img src="images/logo.svg" alt="" width="800px" height=""></img><div class="notes"><p>I work at OddBird, we build beautiful web apps, you can hire us!</p></div></div><div class="step" step="4" data-x="6400" data-y="0"><h1 id="let-s-make-a-thing">Let's make a thing!</h1><div class="notes"><p>A GitHub recommendation engine!</p><p>Find the projects you ought to know about, but don't yet, based on the
 projects other people are watching who tend to watch the same projects you
-do.</p><p>(It's been done already. Oh well.)</p></div></div><div class="step" step="5" data-x="8000" data-y="0"><pre class="highlight code python"><span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">watched1</span><span class="p">,</span> <span class="n">watched2</span><span class="p">):</span>
+do.</p><p>(It's been done already. Oh well.)</p></div></div><div class="step" step="5" data-x="8000" data-y="0"><h1 id="gitrecs-py"><tt>gitrecs.py</tt></h1><pre class="highlight code python"><span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">watched1</span><span class="p">,</span> <span class="n">watched2</span><span class="p">):</span>
     <span class="sd">"""
-    Similarity score between users.
+    Return similarity score for two users.
 
     Users represented as list of watched repos.
 
@@ -28,33 +28,74 @@ do.</p><p>(It's been done already. Oh well.)</p></div></div><div class="step" st
             <span class="n">intersection</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="n">union</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">watched1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">watched2</span><span class="p">)</span> <span class="o">-</span> <span class="n">intersection</span>
 
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">intersection</span><span class="p">)</span> <span class="o">/</span> <span class="n">union</span></pre></div><div class="step" step="6" data-x="9600" data-y="0"><pre class="highlight code python"><span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">watched1</span><span class="p">,</span> <span class="n">watched2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">intersection</span><span class="p">)</span> <span class="o">/</span> <span class="n">union</span></pre><div class="notes"><p>Here's a function to give a similarity score between two users, as a
+floating point number between 0 and 1. We calculate the size of the
+intersection between the two lists and the size of the union of the two
+lists, and return the Jaccard index, which is intersection over union.</p><p>Now of course we want to make sure it works, so let's try it out in the
+shell!</p></div></div><div class="step" step="6" data-x="9600" data-y="0"><h1 id="it-works">It works!</h1><pre class="highlight code python"><span class="o">&gt;&gt;&gt;</span> <span class="n">similarity</span><span class="p">([</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">],</span> <span class="p">[</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">])</span>
+<span class="mf">0.25</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">similarity</span><span class="p">([</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">],</span> <span class="p">[</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">])</span>
+<span class="mf">0.5</span>
+
+<span class="o">&gt;&gt;&gt;</span> <span class="n">similarity</span><span class="p">([</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">],</span> <span class="p">[</span><span class="s">'d'</span><span class="p">])</span>
+<span class="mf">0.0</span></pre><div class="notes"><p>So far, so good!</p><p>But I'm guessing a bunch of you are on the tip of your seats wanting to tell
+me about the bugs you already spotted in this implementation. Here's one...</p></div></div><div class="step" step="7" data-x="11200" data-y="0"><h1 id="uh-oh">Uh oh</h1><pre class="highlight code python"><span class="o">&gt;&gt;&gt;</span> <span class="n">similarity</span><span class="p">([</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">],</span> <span class="p">[</span><span class="s">'b'</span><span class="p">])</span>
+<span class="mf">0.3333333333333333</span></pre><div class="notes"><p>Jaccard index is really a set metric, and our naive implementation with
+lists doesn't handle duplicates correctly. The union of these should be 2,
+making the similarity score 1/2, but instead we calculate a union of 3 and
+so get a similarity score of 1/3.</p><p>Fortunately, Python's got an excellent built-in set data structure, so let's
+rewrite to use that instead and fix this bug!</p></div></div><div class="step" step="8" data-x="12800" data-y="0"><h1 id="now-with-more-set">Now with more <tt>set</tt></h1><pre class="highlight code python"><span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">watched1</span><span class="p">,</span> <span class="n">watched2</span><span class="p">):</span>
     <span class="sd">"""
-    Similarity score between users.
+    Return similarity score for two users.
 
     Users represented as list of watched repos.
 
     Score is Jaccard index (intersection / union).
 
     """</span>
+    <span class="n">watched1</span><span class="p">,</span> <span class="n">watched2</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">watched1</span><span class="p">),</span> <span class="nb">set</span><span class="p">(</span><span class="n">watched2</span><span class="p">)</span>
     <span class="n">intersection</span> <span class="o">=</span> <span class="n">watched1</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">watched2</span><span class="p">)</span>
     <span class="n">union</span> <span class="o">=</span> <span class="n">watched1</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">watched2</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="p">)</span></pre></div><div class="step" step="7" data-x="11200" data-y="0"><pre class="highlight code python"><span class="o">&gt;&gt;&gt;</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">},</span> <span class="p">{</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">})</span>
-<span class="mf">0.3333333333333333</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="p">)</span></pre></div><div class="step" step="9" data-x="14400" data-y="0"><h1 id="fixed">Fixed!</h1><pre class="highlight code python"><span class="o">&gt;&gt;&gt;</span> <span class="n">similarity</span><span class="p">([</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">],</span> <span class="p">[</span><span class="s">'b'</span><span class="p">])</span>
+<span class="mf">0.5</span></pre><div class="notes"><p>So we fire up the shell again and re-type that last test that failed. Great,
+it works for this case! But we want to make sure it works for the other
+cases the first version worked for, so let's try them too...</p></div></div><div class="step" step="10" data-x="16000" data-y="0"><h1 id="did-we-break-anything">Did we break anything?</h1><pre class="highlight code python"><span class="o">&gt;&gt;&gt;</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">},</span> <span class="p">{</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">})</span>
+<span class="mf">0.25</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">},</span> <span class="p">{</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">})</span>
 <span class="mf">0.5</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">},</span> <span class="p">{</span><span class="s">'d'</span><span class="p">})</span>
-<span class="mf">0.0</span>
+<span class="mf">0.0</span></pre><div class="notes"><p>All good!</p></div></div><div class="step" step="11" data-x="17600" data-y="0"><h1 id="this-will-get-old">This will get old.</h1><div class="notes"><p>At this point we've spent an awful lot of time typing stuff into the Python
+shell. And we don't have much to show for it - we know that this version
+works for the cases we've tried, but if we have to change it in future we're
+back at square one, typing things into the shell. That'll get old fast.</p><p>Or if you're developing a web app, loading it up in the browser and clicking
+around. One guy I talked with said he used to develop a 14-page survey app
+without tests, and every time anything on the 14th page changed, he had to
+click through and fill out every page of the survey to find out if his
+change worked. It pains me just to think about that.</p></div></div><div class="step" step="12" data-x="19200" data-y="0"><h1 id="we-re-software-developers">We're software developers!</h1><div class="notes"><p>We know how to handle boring repetitive tasks, we write software to automate
+them!</p></div></div><div class="step" step="13" data-x="20800" data-y="0"><p>Unknown directive type "invisible-code-block".</p><pre class="highlight ">.. invisible-code-block:: python
 
-<span class="o">&gt;&gt;&gt;</span> <span class="n">similarity</span><span class="p">(</span><span class="nb">set</span><span class="p">(),</span> <span class="nb">set</span><span class="p">())</span>
-<span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
-  <span class="n">File</span> <span class="s">"&lt;stdin&gt;"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
-  <span class="n">File</span> <span class="s">"./ghre/similarity.py"</span><span class="p">,</span> <span class="n">line</span> <span class="mi">12</span><span class="p">,</span> <span class="ow">in</span> <span class="n">similarity_score</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="p">)</span>
-<span class="ne">ZeroDivisionError</span><span class="p">:</span> <span class="nb">float</span> <span class="n">division</span> <span class="n">by</span> <span class="n">zero</span></pre></div><div class="step" step="8" id="questions" data-x="12800" data-y="0"><h1 id="questions">Questions?</h1><ul><li><a href="http://oddbird.github.com/start-testing">oddbird.github.com/start-testing</a></li><li><a href="http://pytest.org/">pytest.org</a></li><li><a href="http://nedbatchelder.com/code/coverage/">nedbatchelder.com/code/coverage/</a></li><li><a href="http://www.voidspace.org.uk/python/mock/">www.voidspace.org.uk/python/mock/</a></li><li><a href="http://tox.readthedocs.org">tox.readthedocs.org</a></li><li><a href="http://webtest.pythonpaste.org">webtest.pythonpaste.org</a></li></ul><p><div class="vcard">
+    import io, sys, types
+    sys.modules['gitrecs'] = types.ModuleType('gitrecs')
+    sys.modules['gitrecs'].similarity = similarity
+    sys._old_stdout = sys.stdout
+    sys.stdout = io.StringIO()
+
+</pre><h1 id="test-gitrecs-py"><tt>test_gitrecs.py</tt></h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">gitrecs</span> <span class="kn">import</span> <span class="n">similarity</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="si">%s</span><span class="s"> should be 0.25"</span> <span class="o">%</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">},</span> <span class="p">{</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">}))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="si">%s</span><span class="s"> should be 0.5"</span> <span class="o">%</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">},</span> <span class="p">{</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">}))</span></pre><p>Output:</p><pre class="highlight ">0.25 should be 0.25
+0.5 should be 0.5</pre>-&gt; expected<p>Unknown directive type "invisible-code-block".</p><pre class="highlight ">.. invisible-code-block:: python
+
+    sys.stdout.seek(0)
+    output = sys.stdout.read()
+    assert output == expected, "%r is not %r" % (output, expected)
+    sys.stdout = sys._old_stdout
+
+</pre></div><div class="step" step="14" id="questions" data-x="22400" data-y="0"><h1 id="questions">Questions?</h1><ul><li><a href="http://oddbird.github.com/start-testing">oddbird.github.com/start-testing</a></li><li><a href="http://pytest.org/">pytest.org</a></li><li><a href="http://nedbatchelder.com/code/coverage/">nedbatchelder.com/code/coverage/</a></li><li><a href="http://www.voidspace.org.uk/python/mock/">www.voidspace.org.uk/python/mock/</a></li><li><a href="http://tox.readthedocs.org">tox.readthedocs.org</a></li><li><a href="http://webtest.pythonpaste.org">webtest.pythonpaste.org</a></li></ul><p><div class="vcard">
 <a href="http://www.oddbird.net">
   <img src="images/logo.svg" alt="OddBird" class="logo" />
 </a>
