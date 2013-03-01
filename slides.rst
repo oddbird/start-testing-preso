@@ -20,16 +20,16 @@ Getting started testing
 :id: thistalk
 :data-reveal: 1
 
-A little talk about testing
----------------------------
+This talk
+---------
 
-* Why?
+* Why test?
 
-* How?
+* How to test?
 
-* When?
+* When to test?
 
-* How much?
+* How much to test?
 
 * What if...?
 
@@ -41,11 +41,21 @@ A little talk about testing
 
 .. note::
 
-   Here's the plan for the next half hour: we'll talk about why to write tests,
-   how to write them, when to write them, how many to write, and a few "what
-   if?" scenarios and how to handle them.
+   So here's the plan for the next half hour:
 
-   Hopefully by the end the testing lightbulb will go off (if it hasn't
+   * We'll discuss (briefly!) why to write tests.
+
+   * We'll talk about how to write tests in Python, with lots of code examples
+     and tool recommendations.
+
+   * We'll talk about when to write your tests,
+
+   * ...which tests and how many tests to write.
+
+   * And we'll talk about some common what-if scenarios, like adding tests to a
+     large untested codebase.
+
+   Hopefully by the end the testing lightbulb will turn on (if it hasn't
    already), and you'll be so hooked you won't even be able to sleep tonight
    until you've written a bunch of tests.
 
@@ -65,44 +75,49 @@ Me
 
 * Mostly web development.
 
-|logo|
-
-.. |logo| raw:: html
-
-  <a href="http://www.oddbird.net" class="innerStep">
-    <img src="images/logo.svg" alt="OddBird" class="logo" />
-  </a>
-
 .. note::
 
    A very brief story about me, Python, and testing...
 
-   I like to write tests.
+   I like to write tests. Even this slide deck has tests!
 
    I mostly do web development, but I've tried to keep this talk general.
 
-   You can hire us!
+----
+
+.. image:: images/logo.svg
+   :width: 800px
+
+.. note::
+
+   I work at OddBird, we build beautiful web apps, you can hire us!
 
 ----
 
 Let's make a thing!
+-------------------
 
 .. note::
 
    A GitHub recommendation engine!
 
-   Find the projects you ought to know about, but don't yet!
+   Find the projects you ought to know about, but don't yet, based on the
+   projects other people are watching who tend to watch the same projects you
+   do.
 
-   (It's been done. Oh well.)
+   (It's been done already. Oh well.)
+
+----
 
 .. code:: python
 
     def similarity(watched1, watched2):
         """
-        Similarity score between users watching given lists of repos.
+        Similarity score between users.
 
-        The similarity score is the Jaccard index (size of intersection / size of
-        union); it varies between 0 (no similarity) and 1 (identical sets).
+        Users represented as list of watched repos.
+
+        Score is Jaccard index (intersection / union).
 
         """
         intersection = watched1.intersection(watched2)
