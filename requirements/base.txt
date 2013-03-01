@@ -3,4 +3,3 @@ docutils==0.10
 hovercraft==1.1.dev0.obc1
 lxml==3.1.0
 svg.path==1.0b1
-# pyinotify==0.9.4

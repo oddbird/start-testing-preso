@@ -107,6 +107,15 @@
             }
         };
     
+        var onInnerStep = function () {
+            if (consoleWindow) {
+                var slideView = consoleWindow.document.getElementById('slideView');
+                var activeStep = slideView.contentDocument.querySelector('.active');
+                var innerNext = activeStep.querySelector('.innerStep:not(.stepped)');
+                innerNext.classList.add('stepped');
+            }
+        };
+
         // Sync the previews to the step
         var onStepEnter = function(){
             if(consoleWindow) {
@@ -260,7 +269,7 @@
             // Register the event
             root.addEventListener('impress:stepleave', onStepLeave);
             root.addEventListener('impress:stepenter', onStepEnter);
-            root.addEventListener('impress:innerstep', onStepEnter);
+            root.addEventListener('impress:innerstep', onInnerStep);
             
             //When the window closes, clean up after ourselves.
             window.onunload = function(){

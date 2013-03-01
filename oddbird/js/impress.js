@@ -564,7 +564,7 @@
         
         var inner = {
             next: function () {
-                var innerNext = activeStep.querySelectorAll('.innerStep:not(.stepped)')[0];
+                var innerNext = activeStep.querySelector('.innerStep:not(.stepped)');
                 innerNext.classList.add('stepped');
             }
         };
