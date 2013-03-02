@@ -518,8 +518,8 @@ Why write tests?
 
 ----
 
-Never show your first draft
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The first draft
+~~~~~~~~~~~~~~~
 
 .. code:: python
 
@@ -589,10 +589,10 @@ Harder to test
 Testable is maintainable
 ------------------------
 
-* Code maintenance is managing change.
+* Code maintenance == managing change.
 
 * The less a function knows about the world, the more robust it is against
-  changes in the world (principle of least knowledge).
+  changes in the world ("principle of least knowledge").
 
 * The less a function knows about the world, the less of the world you
   have to set up in order to test it.
@@ -611,7 +611,71 @@ Testable is maintainable
 
 ----
 
+How to test
+-----------
 
+Techniques, tools, and types of tests
+
+----
+
+:data-reveal: 1
+
+Test runners
+------------
+
+A brief synopsis and digression
+
+* We saw `py.test`_ in action: ``pip install pytest; py.test``
+
+  .. _py.test: http://pytest.org
+
+* `Nose`_ is similar: ``pip install nose; nosetests``
+
+  .. _Nose: https://nose.readthedocs.org/
+
+* Both can run simple function tests with asserts.
+
+* `unittest`_ is in the standard library, similar to "xUnit" test frameworks in
+  various languages. Tests require a bit more boilerplate. ``python -m unittest
+  discover``
+
+  .. _unittest: http://docs.python.org/3.3/library/unittest.html
+
+* Others: `twisted.trial`_, `zope.testrunner`_
+
+  .. _twisted.trial: http://twistedmatrix.com/trac/wiki/TwistedTrial
+  .. _zope.testrunner: https://pypi.python.org/pypi/zope.testrunner
+
+* I like py.test; use whatever you like.
+
+.. note::
+
+   Don't waste too much time worrying about this, you'll do just fine with any
+   of them. Better to pick one and dive in and start writing tests!
+
+----
+
+A unittest test
+---------------
+
+.. code:: python
+
+   from unittest import TestCase
+   from gitrecs import similarity
+
+   class TestSimilarity(TestCase):
+       def test_empty(self):
+           score = similarity({}, {})
+           self.assertEqual(score, 0.0)
+
+       def test_half(self):
+           score = similarity({'a'}, {'a', 'b'})
+           self.assertEqual(score, 0.5)
+
+.. note::
+
+   Note the use of methods on self (assertEqual and friends) rather than simple
+   asserts.
 
 ----
 

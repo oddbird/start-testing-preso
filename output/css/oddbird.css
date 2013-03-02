@@ -243,7 +243,7 @@ li {
   margin-bottom: 0.59375rem;
 }
 
-code, pre {
+code, pre, tt {
   font-family: Consolas, Menlo, Monaco, "Lucida Console", "Liberation Mono", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Courier New", monospace, serif;
   font-size: 0.65625rem;
   line-height: 1.1875rem;
@@ -269,6 +269,12 @@ pre {
 
 img {
   max-width: 100%;
+}
+
+tt {
+  background: rgba(0, 114, 153, 0.125);
+  padding: 0.29688rem;
+  border: 0.05938rem solid rgba(0, 38, 50, 0.25);
 }
 
 @font-face {

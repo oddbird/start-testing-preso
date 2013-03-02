@@ -57,7 +57,7 @@ li {
   @include trailer(.5);
 }
 
-code, pre {
+code, pre, tt {
   @include mono;
   @include adjust-font-size-to($xxsmallpx,1);
 }
@@ -79,3 +79,9 @@ pre {
 }
 
 img { max-width: 100%; }
+
+tt {
+   background: color($blue darker, .125);
+   padding: rhythm(.25);
+   border: rhythm(.05) solid color($blue darkest, .25);
+   }

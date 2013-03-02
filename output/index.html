@@ -169,7 +169,7 @@ collected 3 items
 test_gitrecs.py ...
 
 ================ 3 passed in 0.02 seconds =================</pre></div><div class="step" step="22" data-reveal="1" data-x="35200" data-y="0"><h1 id="why-write-tests">Why write tests?</h1><ol><li>Tests tell you when your code is broken.</li><li>Tests improve the design of your code.</li></ol><div class="notes"><ol><li>... as we just saw. "More fun to write tests on weekdays than fix bugs on
-weekends."</li><li>...if you listen. How? Let's look at an example.</li></ol></div></div><div class="step" step="23" data-x="36800" data-y="0"><h1 id="never-show-your-first-draft">Never show your first draft</h1><pre class="highlight code python"><span class="k">class</span> <span class="nc">GithubUser</span><span class="p">:</span>
+weekends."</li><li>...if you listen. How? Let's look at an example.</li></ol></div></div><div class="step" step="23" data-x="36800" data-y="0"><h1 id="the-first-draft">The first draft</h1><pre class="highlight code python"><span class="k">class</span> <span class="nc">GithubUser</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">get_watched_repos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Return this user's set of watched repos."""</span>
         <span class="c"># ... GitHub API querying happens here ...</span>
@@ -201,13 +201,27 @@ your code is making testing harder than it should be.</p><p>In this case, the co
 the similarity calculation; GithubUser is an irrelevant distraction. We can
 extract a similarity function that operates just on sets of repos so it
 doesn't need to know anything about the GithubUser class, and then our tests
-become much simpler.</p></div></div><div class="step" step="25" data-reveal="1" data-x="40000" data-y="0"><h1 id="testable-is-maintainable">Testable is maintainable</h1><ul><li>Code maintenance is managing change.</li><li>The less a function knows about the world, the more robust it is against
-changes in the world (principle of least knowledge).</li><li>The less a function knows about the world, the less of the world you
+become much simpler.</p></div></div><div class="step" step="25" data-reveal="1" data-x="40000" data-y="0"><h1 id="testable-is-maintainable">Testable is maintainable</h1><ul><li>Code maintenance == managing change.</li><li>The less a function knows about the world, the more robust it is against
+changes in the world ("principle of least knowledge").</li><li>The less a function knows about the world, the less of the world you
 have to set up in order to test it.</li></ul><div class="notes"><p>Function (or class, or module - whatever the system under test)</p><p>In this case, similarity is harder to test if it knows about GithubUser,
 because we have to set up a GithubUser (or a fake one) to feed to it for
 every test. And it's also more fragile, because if the name of the
 get_watched_repos method changes, it will break.</p><p>It knows more than it needs to know to do its job! By narrowing its vision
-of the world, we make it both easier to test and easier to maintain.</p></div></div><div class="step" step="26" data-x="41600" data-y="0"><p>At least one body element must separate transitions; adjacent transitions are not allowed.</p></div><div class="step" step="27" id="questions" data-x="43200" data-y="0"><h1 id="questions">Questions?</h1><ul><li><a href="http://oddbird.github.com/start-testing">oddbird.github.com/start-testing</a></li><li><a href="http://pytest.org/">pytest.org</a></li><li><a href="http://nedbatchelder.com/code/coverage/">nedbatchelder.com/code/coverage/</a></li><li><a href="http://www.voidspace.org.uk/python/mock/">www.voidspace.org.uk/python/mock/</a></li><li><a href="http://tox.readthedocs.org">tox.readthedocs.org</a></li><li><a href="http://webtest.pythonpaste.org">webtest.pythonpaste.org</a></li></ul><p><div class="vcard">
+of the world, we make it both easier to test and easier to maintain.</p></div></div><div class="step" step="26" data-x="41600" data-y="0"><h1 id="how-to-test">How to test</h1><p>Techniques, tools, and types of tests</p></div><div class="step" step="27" data-reveal="1" data-x="43200" data-y="0"><h1 id="test-runners">Test runners</h1><p>A brief synopsis and digression</p><ul><li>We saw <a href="http://pytest.org">py.test</a> in action: <tt>pip install pytest; py.test</tt></li><li><a href="https://nose.readthedocs.org/">Nose</a> is similar: <tt>pip install nose; nosetests</tt></li><li>Both can run simple function tests with asserts.</li><li><a href="http://docs.python.org/3.3/library/unittest.html">unittest</a> is in the standard library, similar to "xUnit" test frameworks in
+various languages. Tests require a bit more boilerplate. <tt>python -m unittest
+discover</tt></li><li>Others: <a href="http://twistedmatrix.com/trac/wiki/TwistedTrial">twisted.trial</a>, <a href="https://pypi.python.org/pypi/zope.testrunner">zope.testrunner</a></li><li>I like py.test; use whatever you like.</li></ul><div class="notes"><p>Don't waste too much time worrying about this, you'll do just fine with any
+of them. Better to pick one and dive in and start writing tests!</p></div></div><div class="step" step="28" data-x="44800" data-y="0"><h1 id="a-unittest-test">A unittest test</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">TestCase</span>
+<span class="kn">from</span> <span class="nn">gitrecs</span> <span class="kn">import</span> <span class="n">similarity</span>
+
+<span class="k">class</span> <span class="nc">TestSimilarity</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">similarity</span><span class="p">({},</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_half</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">},</span> <span class="p">{</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span></pre><div class="notes"><p>Note the use of methods on self (assertEqual and friends) rather than simple
+asserts.</p></div></div><div class="step" step="29" id="questions" data-x="46400" data-y="0"><h1 id="questions">Questions?</h1><ul><li><a href="http://oddbird.github.com/start-testing">oddbird.github.com/start-testing</a></li><li><a href="http://pytest.org/">pytest.org</a></li><li><a href="http://nedbatchelder.com/code/coverage/">nedbatchelder.com/code/coverage/</a></li><li><a href="http://www.voidspace.org.uk/python/mock/">www.voidspace.org.uk/python/mock/</a></li><li><a href="http://tox.readthedocs.org">tox.readthedocs.org</a></li><li><a href="http://webtest.pythonpaste.org">webtest.pythonpaste.org</a></li></ul><p><div class="vcard">
 <a href="http://www.oddbird.net">
   <img src="images/logo.svg" alt="OddBird" class="logo" />
 </a>
