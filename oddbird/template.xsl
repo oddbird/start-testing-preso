@@ -6,6 +6,9 @@ xmlns="http://www.w3.org/1999/xhtml">
 
 <xsl:import href="resource:templates/reST.xsl" />
 
+<xsl:template match="comment">
+</xsl:template>
+
 <xsl:template match="/" name="main">
 <html>
   <head>
