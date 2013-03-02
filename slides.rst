@@ -4,6 +4,7 @@
 :keywords: presentation, python, testing, pycon
 
 :skip-help: true
+:data-transition-duration: 400
 
 
 ----
@@ -499,6 +500,120 @@ Tests pass! Ship it!
 
 ----
 
+:data-reveal: 1
+
+Why write tests?
+----------------
+
+#. Tests tell you when your code is broken.
+
+#. Tests improve the design of your code.
+
+.. note::
+
+   #. ... as we just saw. "More fun to write tests on weekdays than fix bugs on
+      weekends."
+
+   #. ...if you listen. How? Let's look at an example.
+
+----
+
+Never show your first draft
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: python
+
+   class GithubUser:
+       def get_watched_repos(self):
+           """Return this user's set of watched repos."""
+           # ... GitHub API querying happens here ...
+
+   def similarity(user1, user2):
+       """Return similarity score for given users."""
+       watched1 = user1.get_watched_repos()
+       watched2 = user2.get_watched_repos()
+
+       # ... same Jaccard index code ...
+
+.. note::
+
+   You may have been thinking, of course tests are easy to write when you're
+   testing nice simple pure functions like that similarity function.
+
+   Here's a secret: that nice simple pure function wasn't the first version of
+   similarity that I wrote. The first version looked more like this.
+
+   Imagine writing tests for this similarity function.
+
+----
+
+Harder to test
+--------------
+
+.. code:: python
+
+   class FakeGithubUser:
+       def __init__(self, watched):
+           self.watched = watched
+
+       def get_watched_repos(self):
+           return watched
+
+   def test_similarity():
+       assert similarity(
+           FakeGithubUser({'a'}),
+           FakeGithubUser({'a', 'b'})
+           ) == 0.5
+
+.. note::
+
+   We take advantage of duck-typing and create a fake replacement for
+   GithubUser that doesn't go out and query the GitHub API, it just returns
+   whatever we tell it to.
+
+   This is a fine testing technique when testing code that has an unavoidable
+   collaborator. But when you have to do this, it should cause you to ask
+   yourself if it's essential to what you want to test, or if the design of
+   your code is making testing harder than it should be.
+
+   In this case, the collaborator is avoidable. What we really want to test is
+   the similarity calculation; GithubUser is an irrelevant distraction. We can
+   extract a similarity function that operates just on sets of repos so it
+   doesn't need to know anything about the GithubUser class, and then our tests
+   become much simpler.
+
+----
+
+:data-reveal: 1
+
+Testable is maintainable
+------------------------
+
+* Code maintenance is managing change.
+
+* The less a function knows about the world, the more robust it is against
+  changes in the world (principle of least knowledge).
+
+* The less a function knows about the world, the less of the world you
+  have to set up in order to test it.
+
+.. note::
+
+   Function (or class, or module - whatever the system under test)
+
+   In this case, similarity is harder to test if it knows about GithubUser,
+   because we have to set up a GithubUser (or a fake one) to feed to it for
+   every test. And it's also more fragile, because if the name of the
+   get_watched_repos method changes, it will break.
+
+   It knows more than it needs to know to do its job! By narrowing its vision
+   of the world, we make it both easier to test and easier to maintain.
+
+----
+
+
+
+----
 
 :id: questions
 

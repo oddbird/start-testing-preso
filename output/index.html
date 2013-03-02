@@ -1,4 +1,4 @@
-<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml"><head><title>Getting started testing</title><meta name="generator" content="Hovercraft! 1.0 http://regebro.github.com/hovercraft"></meta><meta name="author" content="Carl Meyer"></meta><meta name="description" content="a presentation on getting started testing, for PyCon US 2013"></meta><meta name="keywords" content="presentation, python, testing, pycon"></meta><link rel="stylesheet" href="css/hovercraft.css" media="all"></link><link rel="stylesheet" href="css/impressConsole.css" media="all"></link><link rel="stylesheet" href="css/highlight.css" media="all"></link><link rel="stylesheet" href="css/oddbird.css" media="all"></link></head><body class="impress-not-supported"><div id="impress"><div class="step" step="0" id="title" data-x="0" data-y="0"><h1 id="getting-started-testing">Getting started testing</h1><p><div class="vcard">
+<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml"><head><title>Getting started testing</title><meta name="generator" content="Hovercraft! 1.0 http://regebro.github.com/hovercraft"></meta><meta name="author" content="Carl Meyer"></meta><meta name="description" content="a presentation on getting started testing, for PyCon US 2013"></meta><meta name="keywords" content="presentation, python, testing, pycon"></meta><link rel="stylesheet" href="css/hovercraft.css" media="all"></link><link rel="stylesheet" href="css/impressConsole.css" media="all"></link><link rel="stylesheet" href="css/highlight.css" media="all"></link><link rel="stylesheet" href="css/oddbird.css" media="all"></link></head><body class="impress-not-supported"><div id="impress" data-transition-duration="400"><div class="step" step="0" id="title" data-x="0" data-y="0"><h1 id="getting-started-testing">Getting started testing</h1><p><div class="vcard">
 <a href="http://www.oddbird.net">
   <img src="images/logo.svg" alt="OddBird" class="logo" />
 </a>
@@ -168,7 +168,46 @@ collected 3 items
 
 test_gitrecs.py ...
 
-================ 3 passed in 0.02 seconds =================</pre></div><div class="step" step="22" id="questions" data-x="35200" data-y="0"><h1 id="questions">Questions?</h1><ul><li><a href="http://oddbird.github.com/start-testing">oddbird.github.com/start-testing</a></li><li><a href="http://pytest.org/">pytest.org</a></li><li><a href="http://nedbatchelder.com/code/coverage/">nedbatchelder.com/code/coverage/</a></li><li><a href="http://www.voidspace.org.uk/python/mock/">www.voidspace.org.uk/python/mock/</a></li><li><a href="http://tox.readthedocs.org">tox.readthedocs.org</a></li><li><a href="http://webtest.pythonpaste.org">webtest.pythonpaste.org</a></li></ul><p><div class="vcard">
+================ 3 passed in 0.02 seconds =================</pre></div><div class="step" step="22" data-reveal="1" data-x="35200" data-y="0"><h1 id="why-write-tests">Why write tests?</h1><ol><li>Tests tell you when your code is broken.</li><li>Tests improve the design of your code.</li></ol><div class="notes"><ol><li>... as we just saw. "More fun to write tests on weekdays than fix bugs on
+weekends."</li><li>...if you listen. How? Let's look at an example.</li></ol></div></div><div class="step" step="23" data-x="36800" data-y="0"><h1 id="never-show-your-first-draft">Never show your first draft</h1><pre class="highlight code python"><span class="k">class</span> <span class="nc">GithubUser</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">get_watched_repos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Return this user's set of watched repos."""</span>
+        <span class="c"># ... GitHub API querying happens here ...</span>
+
+<span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">user1</span><span class="p">,</span> <span class="n">user2</span><span class="p">):</span>
+    <span class="sd">"""Return similarity score for given users."""</span>
+    <span class="n">watched1</span> <span class="o">=</span> <span class="n">user1</span><span class="o">.</span><span class="n">get_watched_repos</span><span class="p">()</span>
+    <span class="n">watched2</span> <span class="o">=</span> <span class="n">user2</span><span class="o">.</span><span class="n">get_watched_repos</span><span class="p">()</span>
+
+    <span class="c"># ... same Jaccard index code ...</span></pre><div class="notes"><p>You may have been thinking, of course tests are easy to write when you're
+testing nice simple pure functions like that similarity function.</p><p>Here's a secret: that nice simple pure function wasn't the first version of
+similarity that I wrote. The first version looked more like this.</p><p>Imagine writing tests for this similarity function.</p></div></div><div class="step" step="24" data-x="38400" data-y="0"><h1 id="harder-to-test">Harder to test</h1><pre class="highlight code python"><span class="k">class</span> <span class="nc">FakeGithubUser</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">watched</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">watched</span> <span class="o">=</span> <span class="n">watched</span>
+
+    <span class="k">def</span> <span class="nf">get_watched_repos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">watched</span>
+
+<span class="k">def</span> <span class="nf">test_similarity</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">similarity</span><span class="p">(</span>
+        <span class="n">FakeGithubUser</span><span class="p">({</span><span class="s">'a'</span><span class="p">}),</span>
+        <span class="n">FakeGithubUser</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">})</span>
+        <span class="p">)</span> <span class="o">==</span> <span class="mf">0.5</span></pre><div class="notes"><p>We take advantage of duck-typing and create a fake replacement for
+GithubUser that doesn't go out and query the GitHub API, it just returns
+whatever we tell it to.</p><p>This is a fine testing technique when testing code that has an unavoidable
+collaborator. But when you have to do this, it should cause you to ask
+yourself if it's essential to what you want to test, or if the design of
+your code is making testing harder than it should be.</p><p>In this case, the collaborator is avoidable. What we really want to test is
+the similarity calculation; GithubUser is an irrelevant distraction. We can
+extract a similarity function that operates just on sets of repos so it
+doesn't need to know anything about the GithubUser class, and then our tests
+become much simpler.</p></div></div><div class="step" step="25" data-reveal="1" data-x="40000" data-y="0"><h1 id="testable-is-maintainable">Testable is maintainable</h1><ul><li>Code maintenance is managing change.</li><li>The less a function knows about the world, the more robust it is against
+changes in the world (principle of least knowledge).</li><li>The less a function knows about the world, the less of the world you
+have to set up in order to test it.</li></ul><div class="notes"><p>Function (or class, or module - whatever the system under test)</p><p>In this case, similarity is harder to test if it knows about GithubUser,
+because we have to set up a GithubUser (or a fake one) to feed to it for
+every test. And it's also more fragile, because if the name of the
+get_watched_repos method changes, it will break.</p><p>It knows more than it needs to know to do its job! By narrowing its vision
+of the world, we make it both easier to test and easier to maintain.</p></div></div><div class="step" step="26" data-x="41600" data-y="0"><p>At least one body element must separate transitions; adjacent transitions are not allowed.</p></div><div class="step" step="27" id="questions" data-x="43200" data-y="0"><h1 id="questions">Questions?</h1><ul><li><a href="http://oddbird.github.com/start-testing">oddbird.github.com/start-testing</a></li><li><a href="http://pytest.org/">pytest.org</a></li><li><a href="http://nedbatchelder.com/code/coverage/">nedbatchelder.com/code/coverage/</a></li><li><a href="http://www.voidspace.org.uk/python/mock/">www.voidspace.org.uk/python/mock/</a></li><li><a href="http://tox.readthedocs.org">tox.readthedocs.org</a></li><li><a href="http://webtest.pythonpaste.org">webtest.pythonpaste.org</a></li></ul><p><div class="vcard">
 <a href="http://www.oddbird.net">
   <img src="images/logo.svg" alt="OddBird" class="logo" />
 </a>
