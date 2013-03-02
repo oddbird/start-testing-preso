@@ -295,7 +295,7 @@ We're software developers!
 
 ----
 
-.. invisible-code-block:: python
+.. invisible-code-block: python
 
    import io, sys, types
    sys.modules['gitrecs'] = types.ModuleType('gitrecs')
