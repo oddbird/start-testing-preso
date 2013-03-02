@@ -679,6 +679,38 @@ A unittest test
 
 ----
 
+:data-reveal: 1
+
+Characteristics of good tests
+-----------------------------
+
+* Short.
+
+* Fast.
+
+* Isolated.
+
+* Test one thing.
+
+.. note::
+
+   * Long tests are either testing too much in a single test, or are requiring
+     too much setup. They might be telling you the code they're testing needs
+     refactoring.
+
+   * Tests that take a long time to run, don't get run very often.
+
+   * Tests should pass or fail reliably depending on the code under test, not
+     other random factors (which other tests ran first, what data you left
+     lying around in your database, whether some website is up). This means
+     where tests depend on the state of the world, you need to set up that
+     state in a controlled way.
+
+   * One failure doesn't conceal other problems. When a test fails, you know
+     exactly what's broken.
+
+----
+
 :id: questions
 
 Questions?

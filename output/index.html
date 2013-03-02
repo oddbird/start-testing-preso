@@ -221,7 +221,14 @@ of them. Better to pick one and dive in and start writing tests!</p></div></div>
     <span class="k">def</span> <span class="nf">test_half</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">score</span> <span class="o">=</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">},</span> <span class="p">{</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span></pre><div class="notes"><p>Note the use of methods on self (assertEqual and friends) rather than simple
-asserts.</p></div></div><div class="step" step="29" id="questions" data-x="46400" data-y="0"><h1 id="questions">Questions?</h1><ul><li><a href="http://oddbird.github.com/start-testing">oddbird.github.com/start-testing</a></li><li><a href="http://pytest.org/">pytest.org</a></li><li><a href="http://nedbatchelder.com/code/coverage/">nedbatchelder.com/code/coverage/</a></li><li><a href="http://www.voidspace.org.uk/python/mock/">www.voidspace.org.uk/python/mock/</a></li><li><a href="http://tox.readthedocs.org">tox.readthedocs.org</a></li><li><a href="http://webtest.pythonpaste.org">webtest.pythonpaste.org</a></li></ul><p><div class="vcard">
+asserts.</p></div></div><div class="step" step="29" data-reveal="1" data-x="46400" data-y="0"><h1 id="characteristics-of-good-tests">Characteristics of good tests</h1><ul><li>Short.</li><li>Fast.</li><li>Isolated.</li><li>Test one thing.</li></ul><div class="notes"><ul><li>Long tests are either testing too much in a single test, or are requiring
+too much setup. They might be telling you the code they're testing needs
+refactoring.</li><li>Tests that take a long time to run, don't get run very often.</li><li>Tests should pass or fail reliably depending on the code under test, not
+other random factors (which other tests ran first, what data you left
+lying around in your database, whether some website is up). This means
+where tests depend on the state of the world, you need to set up that
+state in a controlled way.</li><li>One failure doesn't conceal other problems. When a test fails, you know
+exactly what's broken.</li></ul></div></div><div class="step" step="30" id="questions" data-x="48000" data-y="0"><h1 id="questions">Questions?</h1><ul><li><a href="http://oddbird.github.com/start-testing">oddbird.github.com/start-testing</a></li><li><a href="http://pytest.org/">pytest.org</a></li><li><a href="http://nedbatchelder.com/code/coverage/">nedbatchelder.com/code/coverage/</a></li><li><a href="http://www.voidspace.org.uk/python/mock/">www.voidspace.org.uk/python/mock/</a></li><li><a href="http://tox.readthedocs.org">tox.readthedocs.org</a></li><li><a href="http://webtest.pythonpaste.org">webtest.pythonpaste.org</a></li></ul><p><div class="vcard">
 <a href="http://www.oddbird.net">
   <img src="images/logo.svg" alt="OddBird" class="logo" />
 </a>
