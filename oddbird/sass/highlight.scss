@@ -26,12 +26,12 @@ $green    : #859900;
 .err { color: $base1 } /* Error */
 .g { color: $base1 } /* Generic */
 .k { color: $green } /* Keyword */
-.l { color: $base1 } /* Literal */
-.n { color: $base1 } /* Name */
+.l { color: $base01 } /* Literal */
+.n { color: $base01 } /* Name */
 .o { color: $green } /* Operator */
 .x { color: $orange } /* Other */
 .p { color: $base1 } /* Punctuation */
-.cm { color: $base01 } /* Comment.Multiline */
+.cm { color: $base1 } /* Comment.Multiline */
 .cp { color: $green } /* Comment.Preproc */
 .c1 { color: $base1 } /* Comment.Single */
 .cs { color: $green } /* Comment.Special */

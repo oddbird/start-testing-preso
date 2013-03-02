@@ -23,12 +23,12 @@
 
 /* Keyword */
 .l {
-  color: #93a1a1;
+  color: #586e75;
 }
 
 /* Literal */
 .n {
-  color: #93a1a1;
+  color: #586e75;
 }
 
 /* Name */
@@ -48,7 +48,7 @@
 
 /* Punctuation */
 .cm {
-  color: #586e75;
+  color: #93a1a1;
 }
 
 /* Comment.Multiline */

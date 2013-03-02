@@ -57,7 +57,7 @@ li {
   @include trailer(.5);
 }
 
-code, .code {
+code, pre {
   @include mono;
   @include adjust-font-size-to($xxsmallpx,1);
 }
@@ -68,7 +68,7 @@ code {
   background: color($blue darker,.125);
 }
 
-.code {
+pre {
   @include adjust-leading-to(.75);
   @include trailer;
   @include box-shadow($base 0 0 .25em inset);

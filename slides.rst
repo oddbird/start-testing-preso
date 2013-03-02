@@ -15,6 +15,16 @@ Getting started testing
 
 |hcard|
 
+.. note::
+
+   Thanks for invite (thank Matt, Dave, WebFilings)
+
+   PyCon talk - tell me what sucks!
+
+   How many have written tests? How many measure test coverage?
+
+   (Beginner-level talk, may be review for some, hopefully some new things.)
+
 ----
 
 :id: thistalk
@@ -75,6 +85,8 @@ Me
 
 * Mostly web development.
 
+* OSS: pip, virtualenv, Django
+
 .. note::
 
    A very brief story about me, Python, and testing...
@@ -82,6 +94,8 @@ Me
    I like to write tests. Even this slide deck has tests!
 
    I mostly do web development, but I've tried to keep this talk general.
+
+   I didn't create these things, but I've done a lot of work on them.
 
 ----
 
@@ -114,22 +128,22 @@ Let's make a thing!
 
 .. code:: python
 
-    def similarity(watched1, watched2):
-        """
-        Return similarity score for two users.
+   def similarity(watched1, watched2):
+       """
+       Return similarity score for two users.
 
-        Users represented as list of watched repos.
+       Users represented as list of watched repos.
 
-        Score is Jaccard index (intersection / union).
+       Score is Jaccard index (intersection / union).
 
-        """
-        intersection = 0
-        for repo in watched1:
-            if repo in watched2:
-                intersection += 1
-        union = len(watched1) + len(watched2) - intersection
+       """
+       intersection = 0
+       for repo in watched1:
+           if repo in watched2:
+               intersection += 1
+       union = len(watched1) + len(watched2) - intersection
 
-        return float(intersection) / union
+       return float(intersection) / union
 
 .. note::
 
@@ -148,14 +162,14 @@ It works!
 
 .. code:: python
 
-    >>> similarity(['a', 'b'], ['b', 'c', 'd'])
-    0.25
+   >>> similarity(['a', 'b'], ['b', 'c', 'd'])
+   0.25
 
-    >>> similarity(['a', 'b', 'c'], ['b', 'c', 'd'])
-    0.5
+   >>> similarity(['a', 'b', 'c'], ['b', 'c', 'd'])
+   0.5
 
-    >>> similarity(['a', 'b', 'c'], ['d'])
-    0.0
+   >>> similarity(['a', 'b', 'c'], ['d'])
+   0.0
 
 .. note::
 
@@ -171,15 +185,15 @@ Uh oh
 
 .. code:: python
 
-    >>> similarity(['a', 'a', 'b'], ['b'])
-    0.3333333333333333
+   >>> similarity(['a', 'a', 'b'], ['b'])
+   0.3333333333333333
 
 .. note::
 
-   Jaccard index is really a set metric, and our naive implementation with
-   lists doesn't handle duplicates correctly. The union of these should be 2,
-   making the similarity score 1/2, but instead we calculate a union of 3 and
-   so get a similarity score of 1/3.
+   Jaccard index is a set metric, and our naive implementation with lists
+   doesn't handle duplicates correctly. The union of these should be 2, making
+   the similarity score 1/2, but instead we calculate a union of 3 and so get a
+   similarity score of 1/3.
 
    Fortunately, Python's got an excellent built-in set data structure, so let's
    rewrite to use that instead and fix this bug!
@@ -191,20 +205,20 @@ Now with more ``set``
 
 .. code:: python
 
-    def similarity(watched1, watched2):
-        """
-        Return similarity score for two users.
+   def similarity(watched1, watched2):
+       """
+       Return similarity score for two users.
 
-        Users represented as list of watched repos.
+       Users represented as list of watched repos.
 
-        Score is Jaccard index (intersection / union).
+       Score is Jaccard index (intersection / union).
 
-        """
-        watched1, watched2 = set(watched1), set(watched2)
-        intersection = watched1.intersection(watched2)
-        union = watched1.union(watched2)
+       """
+       watched1, watched2 = set(watched1), set(watched2)
+       intersection = watched1.intersection(watched2)
+       union = watched1.union(watched2)
 
-        return len(intersection) / len(union)
+       return len(intersection) / len(union)
 
 ----
 
@@ -213,14 +227,15 @@ Fixed!
 
 .. code:: python
 
-    >>> similarity(['a', 'a', 'b'], ['b'])
-    0.5
+   >>> similarity(['a', 'a', 'b'], ['b'])
+   0.5
 
 .. note::
 
    So we fire up the shell again and re-type that last test that failed. Great,
-   it works for this case! But we want to make sure it works for the other
-   cases the first version worked for, so let's try them too...
+   that works!
+
+   But we totally rewrote it, better make sure we didn't break anything...
 
 ----
 
@@ -229,14 +244,14 @@ Did we break anything?
 
 .. code:: python
 
-    >>> similarity({'a', 'b'}, {'b', 'c', 'd'})
-    0.25
+   >>> similarity({'a', 'b'}, {'b', 'c', 'd'})
+   0.25
 
-    >>> similarity({'a', 'b', 'c'}, {'b', 'c', 'd'})
-    0.5
+   >>> similarity({'a', 'b', 'c'}, {'b', 'c', 'd'})
+   0.5
 
-    >>> similarity({'a', 'b', 'c'}, {'d'})
-    0.0
+   >>> similarity({'a', 'b', 'c'}, {'d'})
+   0.0
 
 .. note::
 
@@ -244,26 +259,34 @@ Did we break anything?
 
 ----
 
+:data-reveal: 1
+
 This will get old.
 ------------------
 
+* Repetitive and boring.
+
+* Not easily reproducible.
+
+* Error-prone.
+
 .. note::
 
-   At this point we've spent an awful lot of time typing stuff into the Python
-   shell. And we don't have much to show for it - we know that this version
-   works for the cases we've tried, but if we have to change it in future we're
-   back at square one, typing things into the shell. That'll get old fast.
+   * What happens with boring tasks? I skip them! Now I'll ship broken code!
 
-   Or if you're developing a web app, loading it up in the browser and clicking
-   around. One guy I talked with said he used to develop a 14-page survey app
-   without tests, and every time anything on the 14th page changed, he had to
-   click through and fill out every page of the survey to find out if his
-   change worked. It pains me just to think about that.
+   * If it breaks for you, hard to tell another developer how to see the
+     breakage.
+
+   * Did I calculate all those results right? Will I do it right next time?
 
 ----
 
+:data-reveal: 1
+
 We're software developers!
 --------------------------
+
+* Automating boring things is what we do.
 
 .. note::
 
@@ -274,11 +297,9 @@ We're software developers!
 
 .. invisible-code-block:: python
 
-    import io, sys, types
-    sys.modules['gitrecs'] = types.ModuleType('gitrecs')
-    sys.modules['gitrecs'].similarity = similarity
-    sys._old_stdout = sys.stdout
-    sys.stdout = io.StringIO()
+   import io, sys, types
+   sys.modules['gitrecs'] = types.ModuleType('gitrecs')
+   sys.modules['gitrecs'].similarity = similarity
 
 
 ``test_gitrecs.py``
@@ -286,27 +307,198 @@ We're software developers!
 
 .. code:: python
 
-    from gitrecs import similarity
+   from gitrecs import similarity
 
-    print("%s should be 0.25" % similarity({'a', 'b'}, {'b', 'c', 'd'}))
-    print("%s should be 0.5" % similarity({'a', 'b', 'c'}, {'b', 'c', 'd'}))
+   assert similarity({'a', 'b'}, {'b', 'c', 'd'}) == 0.25
+   assert similarity({'a', 'b', 'c'}, {'b', 'c', 'd'}) == 0.5
 
-Output::
+.. note::
 
-    0.25 should be 0.25
-    0.5 should be 0.5
+   Better! Easily repeatable.
 
-.. -> expected
+   Hmm, another bug.
 
-.. invisible-code-block:: python
+----
 
-    sys.stdout.seek(0)
-    output = sys.stdout.read()
-    assert output == expected, "%r is not %r" % (output, expected)
-    sys.stdout = sys._old_stdout
+A bug!
+------
+
+.. ignore-next-block
+.. code:: python
+
+   from gitrecs import similarity
+
+   assert similarity({}, {}) == 0.0
+   assert similarity({'a', 'b'}, {'b', 'c', 'd'}) == 0.25
+   assert similarity({'a', 'b', 'c'}, {'b', 'c', 'd'}) == 0.5
+
+::
+
+    Traceback (most recent call last):
+      File "test_gitrecs.py", line 3, in <module>
+        assert similarity({}, {}) == 0.0
+      File "/home/carljm/gitrecs.py", line 14, in similarity
+        return len(intersection) / len(union)
+    ZeroDivisionError: division by zero
+
+.. note::
+
+   We can fix the bug, but we have a problem with our tests: because the first
+   one failed, none of the others ran.
+
+   It'd be better if every test ran every time, pass or fail, so we could get a
+   more complete picture of what's broken and what isn't.
+
+----
+
+.. code:: python
+
+   def test_empty():
+       assert similarity({}, {}) == 0.0
+
+   def test_quarter():
+       assert similarity({'a', 'b'}, {'b', 'c', 'd'}) == 0.25
+
+   def test_half():
+       assert similarity({'a'}, {'a', 'b'}) == 0.5
+
+   if __name__ == '__main__':
+       for func in test_empty, test_quarter, test_half:
+           try:
+               func()
+           except Exception as e:
+               print("{} FAILED: {}".format(func.__name__, e))
+           else:
+               print("{} passed.".format(func.__name__))
+
+.. note::
+
+   Some code to run each test, catch any exceptions, and report whether the
+   test passed or failed.
+
+   Fortunately, we don't have to do this ourselves; there are test runners to
+   do it for us!
+
+::
+
+   test_empty FAILED: division by zero
+   test_quarter passed.
+   test_half passed.
 
 
 ----
+
+.. code:: python
+
+   from gitrecs import similarity
+
+   def test_empty():
+       assert similarity({}, {}) == 0.0
+
+   def test_quarter():
+       assert similarity({'a', 'b'}, {'b', 'c', 'd'}) == 0.25
+
+   def test_half():
+       assert similarity({'a'}, {'a', 'b'}) == 0.5
+
+----
+
+pip install pytest
+------------------
+
+----
+
+::
+
+   $ py.test
+   =================== test session starts ===================
+   platform linux -- Python 3.3.0 -- pytest-2.3.4
+   collected 3 items
+
+   test_gitrecs.py F..
+
+   ======================== FAILURES =========================
+   _______________________ test_empty ________________________
+
+       def test_empty():
+   >       assert similarity({}, {}) == 0.0
+
+   test_gitrecs.py:4:
+   _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+       def similarity(watched1, watched2):
+           intersection = watched1.intersection(watched2)
+           union = watched1.union(watched2)
+   >       return len(intersection) / len(union)
+   E       ZeroDivisionError: division by zero
+
+   gitrecs.py:14: ZeroDivisionError
+   =========== 1 failed, 2 passed in 0.02 seconds ============
+
+----
+
+Just for kicks:
+---------------
+
+.. ignore-next-block
+.. code:: python
+
+   import pytest
+
+   from gitrecs import similarity
+
+   @pytest.mark.parametrize('data', [
+       (({}, {}), 0.0),
+       (({'a', 'b'}, {'b', 'c', 'd'}), 0.25),
+       (({'a'}, {'a', 'b'}), 0.5)
+       ])
+   def test_similarity(data):
+       args, expected = data
+       assert similarity(*args) == expected
+
+----
+
+Now let's fix that bug.
+-----------------------
+
+.. code:: python
+
+   def similarity(watched1, watched2):
+       """
+       Return similarity score for two users.
+
+       Users represented as list of watched repos.
+
+       Score is Jaccard index (intersection / union).
+
+       """
+       watched1, watched2 = set(watched1), set(watched2)
+       intersection = watched1.intersection(watched2)
+       union = watched1.union(watched2)
+
+       if not union:
+           return 0.0
+       return len(intersection) / len(union)
+
+----
+
+Tests pass! Ship it!
+--------------------
+
+::
+
+   $ py.test
+   =================== test session starts ===================
+   platform linux -- Python 3.3.0 -- pytest-2.3.4
+   collected 3 items
+
+   test_gitrecs.py ...
+
+   ================ 3 passed in 0.02 seconds =================
+
+
+----
+
 
 :id: questions
 
