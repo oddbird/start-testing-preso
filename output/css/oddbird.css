@@ -164,12 +164,12 @@ html {
 html {
   font-family: "BaskervilleFS", Baskerville, Palatino, Cambria, Georgia, serif;
   text-shadow: 0px 1px 0px rgba(255, 255, 255, 0.5);
-  background: -webkit-gradient(linear, 50% 100%, 50% 0%, color-stop(0%, rgba(51, 203, 255, 0.25)), color-stop(75%, rgba(204, 242, 255, 0.25))) no-repeat, url('../images/noise.png?1362027582') repeat fixed;
-  background: -webkit-linear-gradient(bottom, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/noise.png?1362027582') repeat fixed;
-  background: -moz-linear-gradient(bottom, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/noise.png?1362027582') repeat fixed;
-  background: -o-linear-gradient(bottom, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/noise.png?1362027582') repeat fixed;
-  background: linear-gradient(bottom, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/noise.png?1362027582') repeat fixed;
-  background: linear-gradient(to top, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/noise.png?1362027582') repeat fixed;
+  background: -webkit-gradient(linear, 50% 100%, 50% 0%, color-stop(0%, rgba(51, 203, 255, 0.25)), color-stop(75%, rgba(204, 242, 255, 0.25))) no-repeat, url('../images/noise.png?1362240577') repeat fixed;
+  background: -webkit-linear-gradient(bottom, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/noise.png?1362240577') repeat fixed;
+  background: -moz-linear-gradient(bottom, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/noise.png?1362240577') repeat fixed;
+  background: -o-linear-gradient(bottom, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/noise.png?1362240577') repeat fixed;
+  background: linear-gradient(bottom, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/noise.png?1362240577') repeat fixed;
+  background: linear-gradient(to top, rgba(51, 203, 255, 0.25), rgba(204, 242, 255, 0.25) 75%) no-repeat, url('../images/noise.png?1362240577') repeat fixed;
   height: 100%;
   color: #265f73;
 }
@@ -275,6 +275,16 @@ tt {
   background: rgba(0, 114, 153, 0.125);
   padding: 0.29688rem;
   border: 0.05938rem solid rgba(0, 38, 50, 0.25);
+}
+
+h1 tt {
+  font-size: 0.84375rem;
+  line-height: 1.1875rem;
+}
+
+h2 tt {
+  font-size: 0.6875rem;
+  line-height: 1.1875rem;
 }
 
 @font-face {

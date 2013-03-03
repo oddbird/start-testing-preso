@@ -81,7 +81,15 @@ pre {
 img { max-width: 100%; }
 
 tt {
-   background: color($blue darker, .125);
-   padding: rhythm(.25);
-   border: rhythm(.05) solid color($blue darkest, .25);
-   }
+  background: color($blue darker, .125);
+  padding: rhythm(.25);
+  border: rhythm(.05) solid color($blue darkest, .25);
+}
+
+h1 tt {
+  @include adjust-font-size-to($smallpx,1);
+}
+
+h2 tt {
+  @include adjust-font-size-to($xsmallpx,1);
+}

@@ -20,9 +20,10 @@ Getting started testing
 
    Thanks for invite (thank Matt, Dave, WebFilings)
 
-   PyCon talk - tell me what sucks!
+   PyCon talk - tell me what sucks! Especially tell me what I should cut out!
 
-   How many have written tests? How many measure test coverage?
+   How many have written tests? How many measure test coverage? How many
+   maintain 100% coverage?
 
    (Beginner-level talk, may be review for some, hopefully some new things.)
 
@@ -124,8 +125,8 @@ Let's make a thing!
 
 ----
 
-``gitrecs.py``
---------------
+gitrecs.py
+----------
 
 .. code:: python
 
@@ -144,7 +145,7 @@ Let's make a thing!
                intersection += 1
        union = len(watched1) + len(watched2) - intersection
 
-       return float(intersection) / union
+       return intersection / union
 
 .. note::
 
@@ -201,8 +202,8 @@ Uh oh
 
 ----
 
-Now with more ``set``
----------------------
+Now with more set
+-----------------
 
 .. code:: python
 
@@ -262,8 +263,8 @@ Did we break anything?
 
 :data-reveal: 1
 
-This will get old.
-------------------
+This gets old.
+--------------
 
 * Repetitive and boring.
 
@@ -303,19 +304,19 @@ We're software developers!
    sys.modules['gitrecs'].similarity = similarity
 
 
-``test_gitrecs.py``
--------------------
+test_gitrecs.py
+---------------
 
 .. code:: python
 
    from gitrecs import similarity
 
    assert similarity({'a', 'b'}, {'b', 'c', 'd'}) == 0.25
-   assert similarity({'a', 'b', 'c'}, {'b', 'c', 'd'}) == 0.5
+   assert similarity(['a', 'a'], ['a', 'b']) == 0.5
 
 .. note::
 
-   Better! Easily repeatable.
+   Better! Easily repeatable tests.
 
    Hmm, another bug.
 
@@ -331,7 +332,7 @@ A bug!
 
    assert similarity({}, {}) == 0.0
    assert similarity({'a', 'b'}, {'b', 'c', 'd'}) == 0.25
-   assert similarity({'a', 'b', 'c'}, {'b', 'c', 'd'}) == 0.5
+   assert similarity(['a', 'a'], ['a', 'b']) == 0.5
 
 ::
 
@@ -357,11 +358,11 @@ A bug!
    def test_empty():
        assert similarity({}, {}) == 0.0
 
-   def test_quarter():
+   def test_sets():
        assert similarity({'a', 'b'}, {'b', 'c', 'd'}) == 0.25
 
-   def test_half():
-       assert similarity({'a'}, {'a', 'b'}) == 0.5
+   def test_list_with_dupes():
+       assert similarity(['a', 'a'], ['a', 'b']) == 0.5
 
    if __name__ == '__main__':
        for func in test_empty, test_quarter, test_half:
@@ -378,7 +379,7 @@ A bug!
    test passed or failed.
 
    Fortunately, we don't have to do this ourselves; there are test runners to
-   do it for us!
+   do this for us!
 
 ::
 
@@ -389,6 +390,9 @@ A bug!
 
 ----
 
+pip install pytest
+------------------
+
 .. code:: python
 
    from gitrecs import similarity
@@ -396,16 +400,16 @@ A bug!
    def test_empty():
        assert similarity({}, {}) == 0.0
 
-   def test_quarter():
+   def test_sets():
        assert similarity({'a', 'b'}, {'b', 'c', 'd'}) == 0.25
 
-   def test_half():
-       assert similarity({'a'}, {'a', 'b'}) == 0.5
+   def test_list_with_dupes():
+       assert similarity(['a', 'a'], ['a', 'b']) == 0.5
 
-----
+.. note::
 
-pip install pytest
-------------------
+   One of these runners is pytest; we can install it and cut our test file down
+   to just the tests themselves, no test-running boilerplate at all.
 
 ----
 
@@ -436,6 +440,17 @@ pip install pytest
    gitrecs.py:14: ZeroDivisionError
    =========== 1 failed, 2 passed in 0.02 seconds ============
 
+.. note::
+
+   Run py.test - it automatically finds our tests (because they are in a file
+   whose name begins with "test", and each test function's name begins with
+   "test") and runs them, with isolation so that even if one fails, they all run.
+
+   It shows us the test file it found, shows a dot for each passed test and an
+   F for each failed one.
+
+   And we get some nice helpful debugging output around the failure too.
+
 ----
 
 Just for kicks:
@@ -451,11 +466,17 @@ Just for kicks:
    @pytest.mark.parametrize('data', [
        (({}, {}), 0.0),
        (({'a', 'b'}, {'b', 'c', 'd'}), 0.25),
-       (({'a'}, {'a', 'b'}), 0.5)
+       ((['a', 'a'], ['a', 'b']), 0.5)
        ])
    def test_similarity(data):
        args, expected = data
        assert similarity(*args) == expected
+
+.. note::
+
+   For repetitive tests like these that just call the same function on various
+   data and assert on the output, py.test gives us a way to clean up that
+   repetition: parameterized tests.
 
 ----
 
@@ -497,6 +518,11 @@ Tests pass! Ship it!
 
    ================ 3 passed in 0.02 seconds =================
 
+.. note::
+
+   Not only can we ship this code with some confidence that it works now, but
+   also some confidence that if we change the implementation in the future and
+   reintroduce any of these bugs, we'll catch it as soon as we run the tests.
 
 ----
 
@@ -512,9 +538,10 @@ Why write tests?
 .. note::
 
    #. ... as we just saw. "More fun to write tests on weekdays than fix bugs on
-      weekends."
+      weekends." This is the primary reason most people write tests, and it's a
+      plenty good one.
 
-   #. ...if you listen. How? Let's look at an example.
+   #. ...if you listen to them. How? Let's look at an example.
 
 ----
 
@@ -571,16 +598,16 @@ Harder to test
    GithubUser that doesn't go out and query the GitHub API, it just returns
    whatever we tell it to.
 
-   This is a fine testing technique when testing code that has an unavoidable
-   collaborator. But when you have to do this, it should cause you to ask
-   yourself if it's essential to what you want to test, or if the design of
-   your code is making testing harder than it should be.
+   This is a fine testing technique when testing code that has a collaborator
+   that is critical for its purpose. But when you have to do this, it should
+   cause you to ask yourself if it's essential to what you want to test, or if
+   the design of your code is making testing harder than it should be.
 
-   In this case, the collaborator is avoidable. What we really want to test is
-   the similarity calculation; GithubUser is an irrelevant distraction. We can
-   extract a similarity function that operates just on sets of repos so it
-   doesn't need to know anything about the GithubUser class, and then our tests
-   become much simpler.
+   In this case, the collaborator is an avoidable distraction. What we really
+   want to test is the similarity calculation; GithubUser is an irrelevant
+   distraction. We can extract a similarity function that operates just on sets
+   of repos so it doesn't need to know anything about the GithubUser class, and
+   then our tests become much simpler.
 
 ----
 
@@ -611,10 +638,313 @@ Testable is maintainable
 
 ----
 
-How to test
------------
+If you can't ditch it, mock
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Techniques, tools, and types of tests
+.. code:: python
+
+   from urllib.request import urlopen
+   import json
+
+   API_BASE = 'https://api.github.com'
+
+   class GithubUser:
+       def __init__(self, username):
+           self.username = username
+
+       def get_watched_repos(self):
+           url = API_BASE + '/users/{}/subscriptions'.format(
+               self.username)
+           response = urlopen(url)
+           data = json.loads(response.read().decode('utf-8'))
+           return {r['full_name'] for r in data}
+
+``urlopen`` is key; can't push it up to another layer.
+
+.. note::
+
+   Consider testing the "get_watched_repos" method.
+
+   It has a collaborator; the "urlopen" function. This collaborator is
+   essential to what it does, we can't push it up to another layer.
+
+   But we don't want our tests hitting the GitHub API every time we run them:
+   that's not considerate, and makes our tests fragile to network issues or
+   changes in the data at GitHub, which we can't control.
+
+----
+
+:data-reveal: 1
+
+Replacing a collaborator
+------------------------
+
+* Could add an argument ("dependency injection").
+
+* Or we can monkeypatch!
+
+.. note::
+
+   * But this argument would only be used in tests, so it's unfortunate to add
+     that complexity to the production code. In a static language this might be
+     our only choice (and some languages have entire frameworks for it!), but
+     in Python we have simpler options.
+
+   * Python module namespaces are malleable at runtime, so we can temporarily
+     make a name refer to something else for the duration of a test.
+
+----
+
+.. code:: python
+
+   import json
+   import gitrecs
+
+   class FakeResponse:
+       def __init__(self, content):
+           self.content = content
+
+       def read(self):
+           return self.content
+
+   def test_get_watched_repos():
+       data = json.dumps(
+           [{'full_name': 'a/repo'}, {'full_name': 'b/repo'},
+            ]).encode('utf-8')
+       fake_urlopen = lambda url: FakeResponse(data)
+       _real_urlopen = gitrecs.urlopen
+       gitrecs.urlopen = fake_urlopen
+       try:
+           user = gitrecs.GithubUser('carljm')
+           watched = user.get_watched_repos()
+       finally:
+           gitrecs.urlopen = _real_urlopen
+       assert watched == {'a/repo', 'b/repo'}
+
+.. note::
+
+   (Explain what this code is doing; note necessity of finally clause.)
+
+   But this test is ugly and complicated. There's a lot of accidental
+   complexity obscuring the essence of the test.
+
+   Fortunately, once again there are tools to do this work for us.
+
+----
+
+With unittest.mock
+------------------
+
+.. code:: python
+
+   from unittest import mock
+   import json
+   import gitrecs
+
+   class FakeResponse:
+       def __init__(self, content):
+           self.content = content
+
+       def read(self):
+           return self.content
+
+   @mock.patch('gitrecs.urlopen')
+   def test_get_watched_repos(urlopen):
+       data = json.dumps(
+           [{'full_name': 'a/repo'}, {'full_name': 'b/repo'},
+            ]).encode('utf-8')
+       urlopen.return_value = FakeResponse(data)
+       user = gitrecs.GithubUser('carljm')
+       watched = user.get_watched_repos()
+       assert watched == {'a/repo', 'b/repo'}
+
+.. note::
+
+   (In Python 2, need to ``pip install mock`` and ``import mock``.)
+
+   Now mock takes care of the dirty work of replacing ``gitrecs.urlopen`` and
+   making sure it gets replaced back at the end of the test, making our test
+   shorter and clearer.
+
+   But I'm still not satisfied with it!
+
+   The essence of this test is that if GitHub returns this list of dicts, we
+   transform it into a set of repo full_names. But that essence is obscured
+   here by all this accidental complexity: the FakeResponse with a read()
+   method, needing to encode stuff to bytes because that's what a urlopen
+   response contains, needing to dump a data structure to JSON...
+
+   And if we need to write multiple tests for the data-structure handling,
+   every single test will be cluttered with this additional cruft.
+
+----
+
+Separating concerns
+-------------------
+
+.. code:: python
+
+   from urllib.request import urlopen
+   import json
+
+   API_BASE = 'https://api.github.com'
+
+   def call_api(path):
+       url = API_BASE + path
+       response = urlopen(url)
+       return json.loads(response.read().decode('utf-8'))
+
+   class GithubUser:
+       def __init__(self, username):
+           self.username = username
+
+       def get_watched_repos(self):
+           data = call_api(
+               '/users/{}/subscriptions'.format(self.username))
+           return {r['full_name'] for r in data}
+
+.. note::
+
+   Now we split out the details of calling GitHub's API and returning the
+   parsed JSON data, so our get_watched_repos method doesn't need to concern
+   itself with the details of how that data is fetched, decoded, and parsed.
+
+   This refactored code still passes the test we wrote, so we can trust that
+   it's correct! But now it allows us to write much simpler tests for
+   get_watched_repos.
+
+----
+
+.. code:: python
+
+   from unittest import mock
+   import gitrecs
+
+   @mock.patch('gitrecs.call_api')
+   def test_get_watched_repos(call_api):
+       data = [{'full_name': 'a/r'}, {'full_name': 'b/r'}]
+       call_api.return_value = data
+
+       user = gitrecs.GithubUser('carljm')
+       watched = user.get_watched_repos()
+
+       assert watched == {'a/r', 'b/r'}
+       call_api.assert_called_with(
+           '/users/carljm/subscriptions')
+
+.. note::
+
+   Ahh, much better. This test now clearly communicates its purpose, without
+   distractions.
+
+   We also use a feature of mock to assert that get_watched_repos calls
+   call_api with the correct arguments.
+
+----
+
+.. code:: python
+
+   from unittest import mock
+   import json
+   import gitrecs
+
+   class FakeResponse:
+       def __init__(self, content):
+           self.content = content
+
+       def read(self):
+           return self.content
+
+   @mock.patch('gitrecs.urlopen')
+   def test_call_api(urlopen):
+       data = {'some': 'data'}
+       content = json.dumps(data).encode('utf-8')
+       urlopen.return_value = FakeResponse(content)
+
+       returned = gitrecs.call_api('/some/path')
+
+       assert returned == data
+       urlopen.assert_called_with(
+           'https://api.github.com/some/path')
+
+.. note::
+
+   For completeness, here's what the test for ``call_api`` would look
+   like. Note that this test no longer does anything with the actual data
+   returned from the API call, so we really only need this one test with all
+   the FakeResponse stuff; we may need many tests for different API calls, and
+   they can all omit that complexity.
+
+   We have lost something with this change, though - if the signature of
+   ``call_api`` changes, we could change this test and our tests would still
+   pass, even though ``get_watched_repos`` is now calling it with the wrong
+   arguments. We are now testing both ``call_api`` and ``get_watched_repos`` in
+   isolation; we are not testing that their integration - that they work
+   together correctly.
+
+----
+
+:data-reveal: 1
+
+Unit tests
+----------
+
+* Test one "unit" of code (function or method).
+
+* Isolated from complexities of collaborators.
+
+* Small & fast!
+
+Integration tests
+-----------------
+
+* Test that components talk to each other correctly.
+
+* Slower.
+
+
+.. note::
+
+   * These are the tests we've been looking at.
+
+   * Unless collaborators are simple, replace with fakes.
+
+   * Don't exercise very much code.
+
+   * Can be at various levels: testing integration of two different
+     methods/classes, up to end-to-end tests of the entire system.
+
+   * Exercise more code; may also exercise external systems (e.g. database) and
+     require more setup.
+
+----
+
+:data-reveal: 1
+
+Use unit tests for
+------------------
+
+* Checking correctness of algorithms, data structures.
+
+* Testing edge cases and error cases, covering all sides of conditionals.
+
+* You can write lots, they're small & fast!
+
+
+Use integration tests for
+-------------------------
+
+* Checking integration of components.
+
+* Checking integration with external systems.
+
+* Don't write too many.
+
+.. note::
+
+   Could give a whole talk on what is "too many"; basically, never write
+   another integration test to test a case that could be tested with a unit
+   test of the specific component where that case is handled.
 
 ----
 
@@ -734,13 +1064,13 @@ Questions?
 
 .. |hcard| raw:: html
 
-  <div class="vcard">
-  <a href="http://www.oddbird.net">
-    <img src="images/logo.svg" alt="OddBird" class="logo" />
-  </a>
-  <h2 class="fn">Carl Meyer</h2>
-  <ul class="links">
-    <li><a href="http://www.oddbird.net" class="org url">oddbird.net</a></li>
-    <li><a href="https://twitter.com/carljm" rel="me">@carljm</a></li>
-  </ul>
-  </div>
+   <div class="vcard">
+   <a href="http://www.oddbird.net">
+     <img src="images/logo.svg" alt="OddBird" class="logo" />
+   </a>
+   <h2 class="fn">Carl Meyer</h2>
+   <ul class="links">
+     <li><a href="http://www.oddbird.net" class="org url">oddbird.net</a></li>
+     <li><a href="https://twitter.com/carljm" rel="me">@carljm</a></li>
+   </ul>
+   </div>

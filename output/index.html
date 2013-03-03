@@ -7,13 +7,14 @@
   <li><a href="http://www.oddbird.net" class="org url">oddbird.net</a></li>
   <li><a href="https://twitter.com/carljm" rel="me">@carljm</a></li>
 </ul>
-</div></p><div class="notes"><p>Thanks for invite (thank Matt, Dave, WebFilings)</p><p>PyCon talk - tell me what sucks!</p><p>How many have written tests? How many measure test coverage?</p><p>(Beginner-level talk, may be review for some, hopefully some new things.)</p></div></div><div class="step" step="1" id="thistalk" data-reveal="1" data-x="1600" data-y="0"><h1 id="this-talk">This talk</h1><ul><li>Why test?</li><li>How to test?</li><li>When to test?</li><li>How much to test?</li><li>What if...?</li></ul><p><img src="images/lightbulb.svg" alt="light bulb" class="innerStep" height="300px" /></p><div class="notes"><p>So here's the plan for the next half hour:</p><ul><li>We'll discuss (briefly!) why to write tests.</li><li>We'll talk about how to write tests in Python, with lots of code examples
+</div></p><div class="notes"><p>Thanks for invite (thank Matt, Dave, WebFilings)</p><p>PyCon talk - tell me what sucks! Especially tell me what I should cut out!</p><p>How many have written tests? How many measure test coverage? How many
+maintain 100% coverage?</p><p>(Beginner-level talk, may be review for some, hopefully some new things.)</p></div></div><div class="step" step="1" id="thistalk" data-reveal="1" data-x="1600" data-y="0"><h1 id="this-talk">This talk</h1><ul><li>Why test?</li><li>How to test?</li><li>When to test?</li><li>How much to test?</li><li>What if...?</li></ul><p><img src="images/lightbulb.svg" alt="light bulb" class="innerStep" height="300px" /></p><div class="notes"><p>So here's the plan for the next half hour:</p><ul><li>We'll discuss (briefly!) why to write tests.</li><li>We'll talk about how to write tests in Python, with lots of code examples
 and tool recommendations.</li><li>We'll talk about when to write your tests,</li><li>...which tests and how many tests to write.</li><li>And we'll talk about some common what-if scenarios, like adding tests to a
 large untested codebase.</li></ul><p>Hopefully by the end the testing lightbulb will turn on (if it hasn't
 already), and you'll be so hooked you won't even be able to sleep tonight
 until you've written a bunch of tests.</p></div></div><div class="step" step="2" data-reveal="1" data-x="3200" data-y="0"><h1 id="me">Me</h1><ul><li>Writing Python since 2002.</li><li>Professionally since 2007.</li><li>Writing a lot of tests since 2009.</li><li>Mostly web development.</li><li>OSS: pip, virtualenv, Django</li></ul><div class="notes"><p>A very brief story about me, Python, and testing...</p><p>I like to write tests. Even this slide deck has tests!</p><p>I mostly do web development, but I've tried to keep this talk general.</p><p>I didn't create these things, but I've done a lot of work on them.</p></div></div><div class="step" step="3" data-x="4800" data-y="0"><img src="images/logo.svg" alt="" width="800px" height=""></img><div class="notes"><p>I work at OddBird, we build beautiful web apps, you can hire us!</p></div></div><div class="step" step="4" data-x="6400" data-y="0"><h1 id="let-s-make-a-thing">Let's make a thing!</h1><div class="notes"><p>A GitHub recommendation engine!</p><p>Find the projects you ought to know about, but don't yet, based on the
 projects other people are watching who tend to watch the same projects you
-do.</p><p>(It's been done already. Oh well.)</p></div></div><div class="step" step="5" data-x="8000" data-y="0"><h1 id="gitrecs-py"><tt>gitrecs.py</tt></h1><pre class="highlight code python"><span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">watched1</span><span class="p">,</span> <span class="n">watched2</span><span class="p">):</span>
+do.</p><p>(It's been done already. Oh well.)</p></div></div><div class="step" step="5" data-x="8000" data-y="0"><h1 id="gitrecs-py">gitrecs.py</h1><pre class="highlight code python"><span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">watched1</span><span class="p">,</span> <span class="n">watched2</span><span class="p">):</span>
     <span class="sd">"""
     Return similarity score for two users.
 
@@ -28,7 +29,7 @@ do.</p><p>(It's been done already. Oh well.)</p></div></div><div class="step" st
             <span class="n">intersection</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="n">union</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">watched1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">watched2</span><span class="p">)</span> <span class="o">-</span> <span class="n">intersection</span>
 
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">intersection</span><span class="p">)</span> <span class="o">/</span> <span class="n">union</span></pre><div class="notes"><p>Here's a function to give a similarity score between two users, as a
+    <span class="k">return</span> <span class="n">intersection</span> <span class="o">/</span> <span class="n">union</span></pre><div class="notes"><p>Here's a function to give a similarity score between two users, as a
 floating point number between 0 and 1. We calculate the size of the
 intersection between the two lists and the size of the union of the two
 lists, and return the Jaccard index, which is intersection over union.</p><p>Now of course we want to make sure it works, so let's try it out in the
@@ -45,7 +46,7 @@ me about the bugs you already spotted in this implementation. Here's one...</p><
 doesn't handle duplicates correctly. The union of these should be 2, making
 the similarity score 1/2, but instead we calculate a union of 3 and so get a
 similarity score of 1/3.</p><p>Fortunately, Python's got an excellent built-in set data structure, so let's
-rewrite to use that instead and fix this bug!</p></div></div><div class="step" step="8" data-x="12800" data-y="0"><h1 id="now-with-more-set">Now with more <tt>set</tt></h1><pre class="highlight code python"><span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">watched1</span><span class="p">,</span> <span class="n">watched2</span><span class="p">):</span>
+rewrite to use that instead and fix this bug!</p></div></div><div class="step" step="8" data-x="12800" data-y="0"><h1 id="now-with-more-set">Now with more set</h1><pre class="highlight code python"><span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">watched1</span><span class="p">,</span> <span class="n">watched2</span><span class="p">):</span>
     <span class="sd">"""
     Return similarity score for two users.
 
@@ -67,16 +68,16 @@ that works!</p><p>But we totally rewrote it, better make sure we didn't break an
 <span class="mf">0.5</span>
 
 <span class="o">&gt;&gt;&gt;</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">},</span> <span class="p">{</span><span class="s">'d'</span><span class="p">})</span>
-<span class="mf">0.0</span></pre><div class="notes"><p>All good!</p></div></div><div class="step" step="11" data-reveal="1" data-x="17600" data-y="0"><h1 id="this-will-get-old">This will get old.</h1><ul><li>Repetitive and boring.</li><li>Not easily reproducible.</li><li>Error-prone.</li></ul><div class="notes"><ul><li>What happens with boring tasks? I skip them! Now I'll ship broken code!</li><li>If it breaks for you, hard to tell another developer how to see the
+<span class="mf">0.0</span></pre><div class="notes"><p>All good!</p></div></div><div class="step" step="11" data-reveal="1" data-x="17600" data-y="0"><h1 id="this-gets-old">This gets old.</h1><ul><li>Repetitive and boring.</li><li>Not easily reproducible.</li><li>Error-prone.</li></ul><div class="notes"><ul><li>What happens with boring tasks? I skip them! Now I'll ship broken code!</li><li>If it breaks for you, hard to tell another developer how to see the
 breakage.</li><li>Did I calculate all those results right? Will I do it right next time?</li></ul></div></div><div class="step" step="12" data-reveal="1" data-x="19200" data-y="0"><h1 id="we-re-software-developers">We're software developers!</h1><ul><li>Automating boring things is what we do.</li></ul><div class="notes"><p>We know how to handle boring repetitive tasks, we write software to automate
-them!</p></div></div><div class="step" step="13" data-x="20800" data-y="0"><h1 id="test-gitrecs-py"><tt>test_gitrecs.py</tt></h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">gitrecs</span> <span class="kn">import</span> <span class="n">similarity</span>
+them!</p></div></div><div class="step" step="13" data-x="20800" data-y="0"><h1 id="test-gitrecs-py">test_gitrecs.py</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">gitrecs</span> <span class="kn">import</span> <span class="n">similarity</span>
 
 <span class="k">assert</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">},</span> <span class="p">{</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">})</span> <span class="o">==</span> <span class="mf">0.25</span>
-<span class="k">assert</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">},</span> <span class="p">{</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">})</span> <span class="o">==</span> <span class="mf">0.5</span></pre><div class="notes"><p>Better! Easily repeatable.</p><p>Hmm, another bug.</p></div></div><div class="step" step="14" data-x="22400" data-y="0"><h1 id="a-bug">A bug!</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">gitrecs</span> <span class="kn">import</span> <span class="n">similarity</span>
+<span class="k">assert</span> <span class="n">similarity</span><span class="p">([</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'a'</span><span class="p">],</span> <span class="p">[</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">])</span> <span class="o">==</span> <span class="mf">0.5</span></pre><div class="notes"><p>Better! Easily repeatable tests.</p><p>Hmm, another bug.</p></div></div><div class="step" step="14" data-x="22400" data-y="0"><h1 id="a-bug">A bug!</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">gitrecs</span> <span class="kn">import</span> <span class="n">similarity</span>
 
 <span class="k">assert</span> <span class="n">similarity</span><span class="p">({},</span> <span class="p">{})</span> <span class="o">==</span> <span class="mf">0.0</span>
 <span class="k">assert</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">},</span> <span class="p">{</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">})</span> <span class="o">==</span> <span class="mf">0.25</span>
-<span class="k">assert</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">},</span> <span class="p">{</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">})</span> <span class="o">==</span> <span class="mf">0.5</span></pre><pre class="highlight ">Traceback (most recent call last):
+<span class="k">assert</span> <span class="n">similarity</span><span class="p">([</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'a'</span><span class="p">],</span> <span class="p">[</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">])</span> <span class="o">==</span> <span class="mf">0.5</span></pre><pre class="highlight ">Traceback (most recent call last):
   File "test_gitrecs.py", line 3, in &lt;module&gt;
     assert similarity({}, {}) == 0.0
   File "/home/carljm/gitrecs.py", line 14, in similarity
@@ -86,11 +87,11 @@ one failed, none of the others ran.</p><p>It'd be better if every test ran every
 more complete picture of what's broken and what isn't.</p></div></div><div class="step" step="15" data-x="24000" data-y="0"><pre class="highlight code python"><span class="k">def</span> <span class="nf">test_empty</span><span class="p">():</span>
     <span class="k">assert</span> <span class="n">similarity</span><span class="p">({},</span> <span class="p">{})</span> <span class="o">==</span> <span class="mf">0.0</span>
 
-<span class="k">def</span> <span class="nf">test_quarter</span><span class="p">():</span>
+<span class="k">def</span> <span class="nf">test_sets</span><span class="p">():</span>
     <span class="k">assert</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">},</span> <span class="p">{</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">})</span> <span class="o">==</span> <span class="mf">0.25</span>
 
-<span class="k">def</span> <span class="nf">test_half</span><span class="p">():</span>
-    <span class="k">assert</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">},</span> <span class="p">{</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">})</span> <span class="o">==</span> <span class="mf">0.5</span>
+<span class="k">def</span> <span class="nf">test_list_with_dupes</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">similarity</span><span class="p">([</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'a'</span><span class="p">],</span> <span class="p">[</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">])</span> <span class="o">==</span> <span class="mf">0.5</span>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">test_empty</span><span class="p">,</span> <span class="n">test_quarter</span><span class="p">,</span> <span class="n">test_half</span><span class="p">:</span>
@@ -101,18 +102,19 @@ more complete picture of what's broken and what isn't.</p></div></div><div class
         <span class="k">else</span><span class="p">:</span>
             <span class="k">print</span><span class="p">(</span><span class="s">"{} passed."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">func</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span></pre><div class="notes"><p>Some code to run each test, catch any exceptions, and report whether the
 test passed or failed.</p><p>Fortunately, we don't have to do this ourselves; there are test runners to
-do it for us!</p></div><pre class="highlight ">test_empty FAILED: division by zero
+do this for us!</p></div><pre class="highlight ">test_empty FAILED: division by zero
 test_quarter passed.
-test_half passed.</pre></div><div class="step" step="16" data-x="25600" data-y="0"><pre class="highlight code python"><span class="kn">from</span> <span class="nn">gitrecs</span> <span class="kn">import</span> <span class="n">similarity</span>
+test_half passed.</pre></div><div class="step" step="16" data-x="25600" data-y="0"><h1 id="pip-install-pytest">pip install pytest</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">gitrecs</span> <span class="kn">import</span> <span class="n">similarity</span>
 
 <span class="k">def</span> <span class="nf">test_empty</span><span class="p">():</span>
     <span class="k">assert</span> <span class="n">similarity</span><span class="p">({},</span> <span class="p">{})</span> <span class="o">==</span> <span class="mf">0.0</span>
 
-<span class="k">def</span> <span class="nf">test_quarter</span><span class="p">():</span>
+<span class="k">def</span> <span class="nf">test_sets</span><span class="p">():</span>
     <span class="k">assert</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">},</span> <span class="p">{</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">})</span> <span class="o">==</span> <span class="mf">0.25</span>
 
-<span class="k">def</span> <span class="nf">test_half</span><span class="p">():</span>
-    <span class="k">assert</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">},</span> <span class="p">{</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">})</span> <span class="o">==</span> <span class="mf">0.5</span></pre></div><div class="step" step="17" data-x="27200" data-y="0"><h1 id="pip-install-pytest">pip install pytest</h1></div><div class="step" step="18" data-x="28800" data-y="0"><pre class="highlight ">$ py.test
+<span class="k">def</span> <span class="nf">test_list_with_dupes</span><span class="p">():</span>
+    <span class="k">assert</span> <span class="n">similarity</span><span class="p">([</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'a'</span><span class="p">],</span> <span class="p">[</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">])</span> <span class="o">==</span> <span class="mf">0.5</span></pre><div class="notes"><p>One of these runners is pytest; we can install it and cut our test file down
+to just the tests themselves, no test-running boilerplate at all.</p></div></div><div class="step" step="17" data-x="27200" data-y="0"><pre class="highlight ">$ py.test
 =================== test session starts ===================
 platform linux -- Python 3.3.0 -- pytest-2.3.4
 collected 3 items
@@ -135,18 +137,23 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 E       ZeroDivisionError: division by zero
 
 gitrecs.py:14: ZeroDivisionError
-=========== 1 failed, 2 passed in 0.02 seconds ============</pre></div><div class="step" step="19" data-x="30400" data-y="0"><h1 id="just-for-kicks">Just for kicks:</h1><pre class="highlight code python"><span class="kn">import</span> <span class="nn">pytest</span>
+=========== 1 failed, 2 passed in 0.02 seconds ============</pre><div class="notes"><p>Run py.test - it automatically finds our tests (because they are in a file
+whose name begins with "test", and each test function's name begins with
+"test") and runs them, with isolation so that even if one fails, they all run.</p><p>It shows us the test file it found, shows a dot for each passed test and an
+F for each failed one.</p><p>And we get some nice helpful debugging output around the failure too.</p></div></div><div class="step" step="18" data-x="28800" data-y="0"><h1 id="just-for-kicks">Just for kicks:</h1><pre class="highlight code python"><span class="kn">import</span> <span class="nn">pytest</span>
 
 <span class="kn">from</span> <span class="nn">gitrecs</span> <span class="kn">import</span> <span class="n">similarity</span>
 
 <span class="nd">@pytest.mark.parametrize</span><span class="p">(</span><span class="s">'data'</span><span class="p">,</span> <span class="p">[</span>
     <span class="p">(({},</span> <span class="p">{}),</span> <span class="mf">0.0</span><span class="p">),</span>
     <span class="p">(({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">},</span> <span class="p">{</span><span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">}),</span> <span class="mf">0.25</span><span class="p">),</span>
-    <span class="p">(({</span><span class="s">'a'</span><span class="p">},</span> <span class="p">{</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">}),</span> <span class="mf">0.5</span><span class="p">)</span>
+    <span class="p">(([</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'a'</span><span class="p">],</span> <span class="p">[</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">]),</span> <span class="mf">0.5</span><span class="p">)</span>
     <span class="p">])</span>
 <span class="k">def</span> <span class="nf">test_similarity</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="n">args</span><span class="p">,</span> <span class="n">expected</span> <span class="o">=</span> <span class="n">data</span>
-    <span class="k">assert</span> <span class="n">similarity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span></pre></div><div class="step" step="20" data-x="32000" data-y="0"><h1 id="now-let-s-fix-that-bug">Now let's fix that bug.</h1><pre class="highlight code python"><span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">watched1</span><span class="p">,</span> <span class="n">watched2</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="n">similarity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="n">expected</span></pre><div class="notes"><p>For repetitive tests like these that just call the same function on various
+data and assert on the output, py.test gives us a way to clean up that
+repetition: parameterized tests.</p></div></div><div class="step" step="19" data-x="30400" data-y="0"><h1 id="now-let-s-fix-that-bug">Now let's fix that bug.</h1><pre class="highlight code python"><span class="k">def</span> <span class="nf">similarity</span><span class="p">(</span><span class="n">watched1</span><span class="p">,</span> <span class="n">watched2</span><span class="p">):</span>
     <span class="sd">"""
     Return similarity score for two users.
 
@@ -161,15 +168,18 @@ gitrecs.py:14: ZeroDivisionError
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">union</span><span class="p">:</span>
         <span class="k">return</span> <span class="mf">0.0</span>
-    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="p">)</span></pre></div><div class="step" step="21" data-x="33600" data-y="0"><h1 id="tests-pass-ship-it">Tests pass! Ship it!</h1><pre class="highlight ">$ py.test
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">union</span><span class="p">)</span></pre></div><div class="step" step="20" data-x="32000" data-y="0"><h1 id="tests-pass-ship-it">Tests pass! Ship it!</h1><pre class="highlight ">$ py.test
 =================== test session starts ===================
 platform linux -- Python 3.3.0 -- pytest-2.3.4
 collected 3 items
 
 test_gitrecs.py ...
 
-================ 3 passed in 0.02 seconds =================</pre></div><div class="step" step="22" data-reveal="1" data-x="35200" data-y="0"><h1 id="why-write-tests">Why write tests?</h1><ol><li>Tests tell you when your code is broken.</li><li>Tests improve the design of your code.</li></ol><div class="notes"><ol><li>... as we just saw. "More fun to write tests on weekdays than fix bugs on
-weekends."</li><li>...if you listen. How? Let's look at an example.</li></ol></div></div><div class="step" step="23" data-x="36800" data-y="0"><h1 id="the-first-draft">The first draft</h1><pre class="highlight code python"><span class="k">class</span> <span class="nc">GithubUser</span><span class="p">:</span>
+================ 3 passed in 0.02 seconds =================</pre><div class="notes"><p>Not only can we ship this code with some confidence that it works now, but
+also some confidence that if we change the implementation in the future and
+reintroduce any of these bugs, we'll catch it as soon as we run the tests.</p></div></div><div class="step" step="21" data-reveal="1" data-x="33600" data-y="0"><h1 id="why-write-tests">Why write tests?</h1><ol><li>Tests tell you when your code is broken.</li><li>Tests improve the design of your code.</li></ol><div class="notes"><ol><li>... as we just saw. "More fun to write tests on weekdays than fix bugs on
+weekends." This is the primary reason most people write tests, and it's a
+plenty good one.</li><li>...if you listen to them. How? Let's look at an example.</li></ol></div></div><div class="step" step="22" data-x="35200" data-y="0"><h1 id="the-first-draft">The first draft</h1><pre class="highlight code python"><span class="k">class</span> <span class="nc">GithubUser</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">get_watched_repos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Return this user's set of watched repos."""</span>
         <span class="c"># ... GitHub API querying happens here ...</span>
@@ -181,7 +191,7 @@ weekends."</li><li>...if you listen. How? Let's look at an example.</li></ol></d
 
     <span class="c"># ... same Jaccard index code ...</span></pre><div class="notes"><p>You may have been thinking, of course tests are easy to write when you're
 testing nice simple pure functions like that similarity function.</p><p>Here's a secret: that nice simple pure function wasn't the first version of
-similarity that I wrote. The first version looked more like this.</p><p>Imagine writing tests for this similarity function.</p></div></div><div class="step" step="24" data-x="38400" data-y="0"><h1 id="harder-to-test">Harder to test</h1><pre class="highlight code python"><span class="k">class</span> <span class="nc">FakeGithubUser</span><span class="p">:</span>
+similarity that I wrote. The first version looked more like this.</p><p>Imagine writing tests for this similarity function.</p></div></div><div class="step" step="23" data-x="36800" data-y="0"><h1 id="harder-to-test">Harder to test</h1><pre class="highlight code python"><span class="k">class</span> <span class="nc">FakeGithubUser</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">watched</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">watched</span> <span class="o">=</span> <span class="n">watched</span>
 
@@ -194,23 +204,163 @@ similarity that I wrote. The first version looked more like this.</p><p>Imagine 
         <span class="n">FakeGithubUser</span><span class="p">({</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">})</span>
         <span class="p">)</span> <span class="o">==</span> <span class="mf">0.5</span></pre><div class="notes"><p>We take advantage of duck-typing and create a fake replacement for
 GithubUser that doesn't go out and query the GitHub API, it just returns
-whatever we tell it to.</p><p>This is a fine testing technique when testing code that has an unavoidable
-collaborator. But when you have to do this, it should cause you to ask
-yourself if it's essential to what you want to test, or if the design of
-your code is making testing harder than it should be.</p><p>In this case, the collaborator is avoidable. What we really want to test is
-the similarity calculation; GithubUser is an irrelevant distraction. We can
-extract a similarity function that operates just on sets of repos so it
-doesn't need to know anything about the GithubUser class, and then our tests
-become much simpler.</p></div></div><div class="step" step="25" data-reveal="1" data-x="40000" data-y="0"><h1 id="testable-is-maintainable">Testable is maintainable</h1><ul><li>Code maintenance == managing change.</li><li>The less a function knows about the world, the more robust it is against
+whatever we tell it to.</p><p>This is a fine testing technique when testing code that has a collaborator
+that is critical for its purpose. But when you have to do this, it should
+cause you to ask yourself if it's essential to what you want to test, or if
+the design of your code is making testing harder than it should be.</p><p>In this case, the collaborator is an avoidable distraction. What we really
+want to test is the similarity calculation; GithubUser is an irrelevant
+distraction. We can extract a similarity function that operates just on sets
+of repos so it doesn't need to know anything about the GithubUser class, and
+then our tests become much simpler.</p></div></div><div class="step" step="24" data-reveal="1" data-x="38400" data-y="0"><h1 id="testable-is-maintainable">Testable is maintainable</h1><ul><li>Code maintenance == managing change.</li><li>The less a function knows about the world, the more robust it is against
 changes in the world ("principle of least knowledge").</li><li>The less a function knows about the world, the less of the world you
 have to set up in order to test it.</li></ul><div class="notes"><p>Function (or class, or module - whatever the system under test)</p><p>In this case, similarity is harder to test if it knows about GithubUser,
 because we have to set up a GithubUser (or a fake one) to feed to it for
 every test. And it's also more fragile, because if the name of the
 get_watched_repos method changes, it will break.</p><p>It knows more than it needs to know to do its job! By narrowing its vision
-of the world, we make it both easier to test and easier to maintain.</p></div></div><div class="step" step="26" data-x="41600" data-y="0"><h1 id="how-to-test">How to test</h1><p>Techniques, tools, and types of tests</p></div><div class="step" step="27" data-reveal="1" data-x="43200" data-y="0"><h1 id="test-runners">Test runners</h1><p>A brief synopsis and digression</p><ul><li>We saw <a href="http://pytest.org">py.test</a> in action: <tt>pip install pytest; py.test</tt></li><li><a href="https://nose.readthedocs.org/">Nose</a> is similar: <tt>pip install nose; nosetests</tt></li><li>Both can run simple function tests with asserts.</li><li><a href="http://docs.python.org/3.3/library/unittest.html">unittest</a> is in the standard library, similar to "xUnit" test frameworks in
+of the world, we make it both easier to test and easier to maintain.</p></div></div><div class="step" step="25" data-x="40000" data-y="0"><h1 id="if-you-can-t-ditch-it-mock">If you can't ditch it, mock</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">API_BASE</span> <span class="o">=</span> <span class="s">'https://api.github.com'</span>
+
+<span class="k">class</span> <span class="nc">GithubUser</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+
+    <span class="k">def</span> <span class="nf">get_watched_repos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">API_BASE</span> <span class="o">+</span> <span class="s">'/users/{}/subscriptions'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">r</span><span class="p">[</span><span class="s">'full_name'</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">data</span><span class="p">}</span></pre><p><tt>urlopen</tt> is key; can't push it up to another layer.</p><div class="notes"><p>Consider testing the "get_watched_repos" method.</p><p>It has a collaborator; the "urlopen" function. This collaborator is
+essential to what it does, we can't push it up to another layer.</p><p>But we don't want our tests hitting the GitHub API every time we run them:
+that's not considerate, and makes our tests fragile to network issues or
+changes in the data at GitHub, which we can't control.</p></div></div><div class="step" step="26" data-reveal="1" data-x="41600" data-y="0"><h1 id="replacing-a-collaborator">Replacing a collaborator</h1><ul><li>Could add an argument ("dependency injection").</li><li>Or we can monkeypatch!</li></ul><div class="notes"><ul><li>But this argument would only be used in tests, so it's unfortunate to add
+that complexity to the production code. In a static language this might be
+our only choice (and some languages have entire frameworks for it!), but
+in Python we have simpler options.</li><li>Python module namespaces are malleable at runtime, so we can temporarily
+make a name refer to something else for the duration of a test.</li></ul></div></div><div class="step" step="27" data-x="43200" data-y="0"><pre class="highlight code python"><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">gitrecs</span>
+
+<span class="k">class</span> <span class="nc">FakeResponse</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span>
+
+<span class="k">def</span> <span class="nf">test_get_watched_repos</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+        <span class="p">[{</span><span class="s">'full_name'</span><span class="p">:</span> <span class="s">'a/repo'</span><span class="p">},</span> <span class="p">{</span><span class="s">'full_name'</span><span class="p">:</span> <span class="s">'b/repo'</span><span class="p">},</span>
+         <span class="p">])</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">)</span>
+    <span class="n">fake_urlopen</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">url</span><span class="p">:</span> <span class="n">FakeResponse</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">_real_urlopen</span> <span class="o">=</span> <span class="n">gitrecs</span><span class="o">.</span><span class="n">urlopen</span>
+    <span class="n">gitrecs</span><span class="o">.</span><span class="n">urlopen</span> <span class="o">=</span> <span class="n">fake_urlopen</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="n">gitrecs</span><span class="o">.</span><span class="n">GithubUser</span><span class="p">(</span><span class="s">'carljm'</span><span class="p">)</span>
+        <span class="n">watched</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get_watched_repos</span><span class="p">()</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">gitrecs</span><span class="o">.</span><span class="n">urlopen</span> <span class="o">=</span> <span class="n">_real_urlopen</span>
+    <span class="k">assert</span> <span class="n">watched</span> <span class="o">==</span> <span class="p">{</span><span class="s">'a/repo'</span><span class="p">,</span> <span class="s">'b/repo'</span><span class="p">}</span></pre><div class="notes"><p>(Explain what this code is doing; note necessity of finally clause.)</p><p>But this test is ugly and complicated. There's a lot of accidental
+complexity obscuring the essence of the test.</p><p>Fortunately, once again there are tools to do this work for us.</p></div></div><div class="step" step="28" data-x="44800" data-y="0"><h1 id="with-unittest-mock">With unittest.mock</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">mock</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">gitrecs</span>
+
+<span class="k">class</span> <span class="nc">FakeResponse</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span>
+
+<span class="nd">@mock.patch</span><span class="p">(</span><span class="s">'gitrecs.urlopen'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_get_watched_repos</span><span class="p">(</span><span class="n">urlopen</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span>
+        <span class="p">[{</span><span class="s">'full_name'</span><span class="p">:</span> <span class="s">'a/repo'</span><span class="p">},</span> <span class="p">{</span><span class="s">'full_name'</span><span class="p">:</span> <span class="s">'b/repo'</span><span class="p">},</span>
+         <span class="p">])</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">)</span>
+    <span class="n">urlopen</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">FakeResponse</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">user</span> <span class="o">=</span> <span class="n">gitrecs</span><span class="o">.</span><span class="n">GithubUser</span><span class="p">(</span><span class="s">'carljm'</span><span class="p">)</span>
+    <span class="n">watched</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get_watched_repos</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">watched</span> <span class="o">==</span> <span class="p">{</span><span class="s">'a/repo'</span><span class="p">,</span> <span class="s">'b/repo'</span><span class="p">}</span></pre><div class="notes"><p>(In Python 2, need to <tt>pip install mock</tt> and <tt>import mock</tt>.)</p><p>Now mock takes care of the dirty work of replacing <tt>gitrecs.urlopen</tt> and
+making sure it gets replaced back at the end of the test, making our test
+shorter and clearer.</p><p>But I'm still not satisfied with it!</p><p>The essence of this test is that if GitHub returns this list of dicts, we
+transform it into a set of repo full_names. But that essence is obscured
+here by all this accidental complexity: the FakeResponse with a read()
+method, needing to encode stuff to bytes because that's what a urlopen
+response contains, needing to dump a data structure to JSON...</p><p>And if we need to write multiple tests for the data-structure handling,
+every single test will be cluttered with this additional cruft.</p></div></div><div class="step" step="29" data-x="46400" data-y="0"><h1 id="separating-concerns">Separating concerns</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">API_BASE</span> <span class="o">=</span> <span class="s">'https://api.github.com'</span>
+
+<span class="k">def</span> <span class="nf">call_api</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">API_BASE</span> <span class="o">+</span> <span class="n">path</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">))</span>
+
+<span class="k">class</span> <span class="nc">GithubUser</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+
+    <span class="k">def</span> <span class="nf">get_watched_repos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">call_api</span><span class="p">(</span>
+            <span class="s">'/users/{}/subscriptions'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">r</span><span class="p">[</span><span class="s">'full_name'</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">data</span><span class="p">}</span></pre><div class="notes"><p>Now we split out the details of calling GitHub's API and returning the
+parsed JSON data, so our get_watched_repos method doesn't need to concern
+itself with the details of how that data is fetched, decoded, and parsed.</p><p>This refactored code still passes the test we wrote, so we can trust that
+it's correct! But now it allows us to write much simpler tests for
+get_watched_repos.</p></div></div><div class="step" step="30" data-x="48000" data-y="0"><pre class="highlight code python"><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">mock</span>
+<span class="kn">import</span> <span class="nn">gitrecs</span>
+
+<span class="nd">@mock.patch</span><span class="p">(</span><span class="s">'gitrecs.call_api'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_get_watched_repos</span><span class="p">(</span><span class="n">call_api</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[{</span><span class="s">'full_name'</span><span class="p">:</span> <span class="s">'a/r'</span><span class="p">},</span> <span class="p">{</span><span class="s">'full_name'</span><span class="p">:</span> <span class="s">'b/r'</span><span class="p">}]</span>
+    <span class="n">call_api</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">data</span>
+
+    <span class="n">user</span> <span class="o">=</span> <span class="n">gitrecs</span><span class="o">.</span><span class="n">GithubUser</span><span class="p">(</span><span class="s">'carljm'</span><span class="p">)</span>
+    <span class="n">watched</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get_watched_repos</span><span class="p">()</span>
+
+    <span class="k">assert</span> <span class="n">watched</span> <span class="o">==</span> <span class="p">{</span><span class="s">'a/r'</span><span class="p">,</span> <span class="s">'b/r'</span><span class="p">}</span>
+    <span class="n">call_api</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span>
+        <span class="s">'/users/carljm/subscriptions'</span><span class="p">)</span></pre><div class="notes"><p>Ahh, much better. This test now clearly communicates its purpose, without
+distractions.</p><p>We also use a feature of mock to assert that get_watched_repos calls
+call_api with the correct arguments.</p></div></div><div class="step" step="31" data-x="49600" data-y="0"><pre class="highlight code python"><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">mock</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">gitrecs</span>
+
+<span class="k">class</span> <span class="nc">FakeResponse</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">content</span>
+
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span>
+
+<span class="nd">@mock.patch</span><span class="p">(</span><span class="s">'gitrecs.urlopen'</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_call_api</span><span class="p">(</span><span class="n">urlopen</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s">'some'</span><span class="p">:</span> <span class="s">'data'</span><span class="p">}</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">)</span>
+    <span class="n">urlopen</span><span class="o">.</span><span class="n">return_value</span> <span class="o">=</span> <span class="n">FakeResponse</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+
+    <span class="n">returned</span> <span class="o">=</span> <span class="n">gitrecs</span><span class="o">.</span><span class="n">call_api</span><span class="p">(</span><span class="s">'/some/path'</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">returned</span> <span class="o">==</span> <span class="n">data</span>
+    <span class="n">urlopen</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span>
+        <span class="s">'https://api.github.com/some/path'</span><span class="p">)</span></pre><div class="notes"><p>For completeness, here's what the test for <tt>call_api</tt> would look
+like. Note that this test no longer does anything with the actual data
+returned from the API call, so we really only need this one test with all
+the FakeResponse stuff; we may need many tests for different API calls, and
+they can all omit that complexity.</p><p>We have lost something with this change, though - if the signature of
+<tt>call_api</tt> changes, we could change this test and our tests would still
+pass, even though <tt>get_watched_repos</tt> is now calling it with the wrong
+arguments. We are now testing both <tt>call_api</tt> and <tt>get_watched_repos</tt> in
+isolation; we are not testing that their integration - that they work
+together correctly.</p></div></div><div class="step" step="32" data-reveal="1" data-x="51200" data-y="0"><h1 id="unit-tests">Unit tests</h1><ul><li>Test one "unit" of code (function or method).</li><li>Isolated from complexities of collaborators.</li><li>Small &amp; fast!</li></ul><h1 id="integration-tests">Integration tests</h1><ul><li>Test that components talk to each other correctly.</li><li>Slower.</li></ul><div class="notes"><ul><li>These are the tests we've been looking at.</li><li>Unless collaborators are simple, replace with fakes.</li><li>Don't exercise very much code.</li><li>Can be at various levels: testing integration of two different
+methods/classes, up to end-to-end tests of the entire system.</li><li>Exercise more code; may also exercise external systems (e.g. database) and
+require more setup.</li></ul></div></div><div class="step" step="33" data-reveal="1" data-x="52800" data-y="0"><h1 id="use-unit-tests-for">Use unit tests for</h1><ul><li>Checking correctness of algorithms, data structures.</li><li>Testing edge cases and error cases, covering all sides of conditionals.</li><li>You can write lots, they're small &amp; fast!</li></ul><h1 id="use-integration-tests-for">Use integration tests for</h1><ul><li>Checking integration of components.</li><li>Checking integration with external systems.</li><li>Don't write too many.</li></ul><div class="notes"><p>Could give a whole talk on what is "too many"; basically, never write
+another integration test to test a case that could be tested with a unit
+test of the specific component where that case is handled.</p></div></div><div class="step" step="34" data-reveal="1" data-x="54400" data-y="0"><h1 id="test-runners">Test runners</h1><p>A brief synopsis and digression</p><ul><li>We saw <a href="http://pytest.org">py.test</a> in action: <tt>pip install pytest; py.test</tt></li><li><a href="https://nose.readthedocs.org/">Nose</a> is similar: <tt>pip install nose; nosetests</tt></li><li>Both can run simple function tests with asserts.</li><li><a href="http://docs.python.org/3.3/library/unittest.html">unittest</a> is in the standard library, similar to "xUnit" test frameworks in
 various languages. Tests require a bit more boilerplate. <tt>python -m unittest
 discover</tt></li><li>Others: <a href="http://twistedmatrix.com/trac/wiki/TwistedTrial">twisted.trial</a>, <a href="https://pypi.python.org/pypi/zope.testrunner">zope.testrunner</a></li><li>I like py.test; use whatever you like.</li></ul><div class="notes"><p>Don't waste too much time worrying about this, you'll do just fine with any
-of them. Better to pick one and dive in and start writing tests!</p></div></div><div class="step" step="28" data-x="44800" data-y="0"><h1 id="a-unittest-test">A unittest test</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">TestCase</span>
+of them. Better to pick one and dive in and start writing tests!</p></div></div><div class="step" step="35" data-x="56000" data-y="0"><h1 id="a-unittest-test">A unittest test</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">TestCase</span>
 <span class="kn">from</span> <span class="nn">gitrecs</span> <span class="kn">import</span> <span class="n">similarity</span>
 
 <span class="k">class</span> <span class="nc">TestSimilarity</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
@@ -221,14 +371,14 @@ of them. Better to pick one and dive in and start writing tests!</p></div></div>
     <span class="k">def</span> <span class="nf">test_half</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">score</span> <span class="o">=</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">},</span> <span class="p">{</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span></pre><div class="notes"><p>Note the use of methods on self (assertEqual and friends) rather than simple
-asserts.</p></div></div><div class="step" step="29" data-reveal="1" data-x="46400" data-y="0"><h1 id="characteristics-of-good-tests">Characteristics of good tests</h1><ul><li>Short.</li><li>Fast.</li><li>Isolated.</li><li>Test one thing.</li></ul><div class="notes"><ul><li>Long tests are either testing too much in a single test, or are requiring
+asserts.</p></div></div><div class="step" step="36" data-reveal="1" data-x="57600" data-y="0"><h1 id="characteristics-of-good-tests">Characteristics of good tests</h1><ul><li>Short.</li><li>Fast.</li><li>Isolated.</li><li>Test one thing.</li></ul><div class="notes"><ul><li>Long tests are either testing too much in a single test, or are requiring
 too much setup. They might be telling you the code they're testing needs
 refactoring.</li><li>Tests that take a long time to run, don't get run very often.</li><li>Tests should pass or fail reliably depending on the code under test, not
 other random factors (which other tests ran first, what data you left
 lying around in your database, whether some website is up). This means
 where tests depend on the state of the world, you need to set up that
 state in a controlled way.</li><li>One failure doesn't conceal other problems. When a test fails, you know
-exactly what's broken.</li></ul></div></div><div class="step" step="30" id="questions" data-x="48000" data-y="0"><h1 id="questions">Questions?</h1><ul><li><a href="http://oddbird.github.com/start-testing">oddbird.github.com/start-testing</a></li><li><a href="http://pytest.org/">pytest.org</a></li><li><a href="http://nedbatchelder.com/code/coverage/">nedbatchelder.com/code/coverage/</a></li><li><a href="http://www.voidspace.org.uk/python/mock/">www.voidspace.org.uk/python/mock/</a></li><li><a href="http://tox.readthedocs.org">tox.readthedocs.org</a></li><li><a href="http://webtest.pythonpaste.org">webtest.pythonpaste.org</a></li></ul><p><div class="vcard">
+exactly what's broken.</li></ul></div></div><div class="step" step="37" id="questions" data-x="59200" data-y="0"><h1 id="questions">Questions?</h1><ul><li><a href="http://oddbird.github.com/start-testing">oddbird.github.com/start-testing</a></li><li><a href="http://pytest.org/">pytest.org</a></li><li><a href="http://nedbatchelder.com/code/coverage/">nedbatchelder.com/code/coverage/</a></li><li><a href="http://www.voidspace.org.uk/python/mock/">www.voidspace.org.uk/python/mock/</a></li><li><a href="http://tox.readthedocs.org">tox.readthedocs.org</a></li><li><a href="http://webtest.pythonpaste.org">webtest.pythonpaste.org</a></li></ul><p><div class="vcard">
 <a href="http://www.oddbird.net">
   <img src="images/logo.svg" alt="OddBird" class="logo" />
 </a>
