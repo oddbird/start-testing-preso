@@ -7,7 +7,8 @@
   <li><a href="http://www.oddbird.net" class="org url">oddbird.net</a></li>
   <li><a href="https://twitter.com/carljm" rel="me">@carljm</a></li>
 </ul>
-</div></p><div class="notes"><p>Thanks for invite (thank Matt, Dave, WebFilings)</p><p>PyCon talk - tell me what sucks! Especially tell me what I should cut out!</p><p>How many have written tests? How many measure test coverage? How many
+</div></p><div class="notes"><p>Thanks for invite (thank Matt, Dave, WebFilings)</p><p>PyCon talk - tell me what sucks! Especially tell me what I should cut out!
+All feedback welcome, even "it was boring, add more pictures of cats."</p><p>How many have written tests? How many measure test coverage? How many
 maintain 100% coverage?</p><p>(Beginner-level talk, may be review for some, hopefully some new things.)</p></div></div><div class="step" step="1" id="thistalk" data-reveal="1" data-x="1600" data-y="0"><h1 id="this-talk">This talk</h1><ul><li>Why test?</li><li>How to test?</li><li>When to test?</li><li>How much to test?</li><li>What if...?</li></ul><p><img src="images/lightbulb.svg" alt="light bulb" class="innerStep" height="300px" /></p><div class="notes"><p>So here's the plan for the next half hour:</p><ul><li>We'll discuss (briefly!) why to write tests.</li><li>We'll talk about how to write tests in Python, with lots of code examples
 and tool recommendations.</li><li>We'll talk about when to write your tests,</li><li>...which tests and how many tests to write.</li><li>And we'll talk about some common what-if scenarios, like adding tests to a
 large untested codebase.</li></ul><p>Hopefully by the end the testing lightbulb will turn on (if it hasn't
@@ -177,9 +178,24 @@ test_gitrecs.py ...
 
 ================ 3 passed in 0.02 seconds =================</pre><div class="notes"><p>Not only can we ship this code with some confidence that it works now, but
 also some confidence that if we change the implementation in the future and
-reintroduce any of these bugs, we'll catch it as soon as we run the tests.</p></div></div><div class="step" step="21" data-reveal="1" data-x="33600" data-y="0"><h1 id="why-write-tests">Why write tests?</h1><ol><li>Tests tell you when your code is broken.</li><li>Tests improve the design of your code.</li></ol><div class="notes"><ol><li>... as we just saw. "More fun to write tests on weekdays than fix bugs on
+reintroduce any of these bugs, we'll catch it as soon as we run the tests.</p></div></div><div class="step" step="21" data-reveal="1" data-x="33600" data-y="0"><h1 id="test-runners">Test runners</h1><p>A brief synopsis and digression</p><ul><li>We saw <a href="http://pytest.org">py.test</a> in action: <tt>pip install pytest; py.test</tt></li><li><a href="https://nose.readthedocs.org/">Nose</a> is similar: <tt>pip install nose; nosetests</tt></li><li>Both can run simple function tests with asserts.</li><li><a href="http://docs.python.org/3.3/library/unittest.html">unittest</a> is in the standard library, similar to "xUnit" test frameworks in
+various languages. Tests require a bit more boilerplate. <tt>python -m unittest
+discover</tt></li><li>Others: <a href="http://twistedmatrix.com/trac/wiki/TwistedTrial">twisted.trial</a>, <a href="https://pypi.python.org/pypi/zope.testrunner">zope.testrunner</a></li></ul><div class="notes"><p>Don't waste too much time worrying about this, you'll do just fine with any
+of them. Better to pick one and dive in and start writing tests! I like
+py.test, use what you like.</p></div></div><div class="step" step="22" data-x="35200" data-y="0"><h1 id="a-unittest-test">A unittest test</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">TestCase</span>
+<span class="kn">from</span> <span class="nn">gitrecs</span> <span class="kn">import</span> <span class="n">similarity</span>
+
+<span class="k">class</span> <span class="nc">TestSimilarity</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">similarity</span><span class="p">({},</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">test_half</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">},</span> <span class="p">{</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span></pre><div class="notes"><p>Note the use of methods on self (assertEqual and friends) rather than simple
+asserts.</p></div></div><div class="step" step="23" data-reveal="1" data-x="36800" data-y="0"><h1 id="why-write-tests">Why write tests?</h1><ol><li>Tests tell you when your code is broken.</li><li>Tests improve the design of your code.</li></ol><div class="notes"><ol><li>... as we just saw. "More fun to write tests on weekdays than fix bugs on
 weekends." This is the primary reason most people write tests, and it's a
-plenty good one.</li><li>...if you listen to them. How? Let's look at an example.</li></ol></div></div><div class="step" step="22" data-x="35200" data-y="0"><h1 id="the-first-draft">The first draft</h1><pre class="highlight code python"><span class="k">class</span> <span class="nc">GithubUser</span><span class="p">:</span>
+plenty good one.</li><li>...if you listen to them. How? Let's look at an example.</li></ol></div></div><div class="step" step="24" data-x="38400" data-y="0"><h1 id="the-first-draft">The first draft</h1><pre class="highlight code python"><span class="k">class</span> <span class="nc">GithubUser</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">get_watched_repos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Return this user's set of watched repos."""</span>
         <span class="c"># ... GitHub API querying happens here ...</span>
@@ -191,7 +207,7 @@ plenty good one.</li><li>...if you listen to them. How? Let's look at an example
 
     <span class="c"># ... same Jaccard index code ...</span></pre><div class="notes"><p>You may have been thinking, of course tests are easy to write when you're
 testing nice simple pure functions like that similarity function.</p><p>Here's a secret: that nice simple pure function wasn't the first version of
-similarity that I wrote. The first version looked more like this.</p><p>Imagine writing tests for this similarity function.</p></div></div><div class="step" step="23" data-x="36800" data-y="0"><h1 id="harder-to-test">Harder to test</h1><pre class="highlight code python"><span class="k">class</span> <span class="nc">FakeGithubUser</span><span class="p">:</span>
+similarity that I wrote. The first version looked more like this.</p><p>Imagine writing tests for this similarity function.</p></div></div><div class="step" step="25" data-x="40000" data-y="0"><h1 id="harder-to-test">Harder to test</h1><pre class="highlight code python"><span class="k">class</span> <span class="nc">FakeGithubUser</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">watched</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">watched</span> <span class="o">=</span> <span class="n">watched</span>
 
@@ -211,13 +227,13 @@ the design of your code is making testing harder than it should be.</p><p>In thi
 want to test is the similarity calculation; GithubUser is an irrelevant
 distraction. We can extract a similarity function that operates just on sets
 of repos so it doesn't need to know anything about the GithubUser class, and
-then our tests become much simpler.</p></div></div><div class="step" step="24" data-reveal="1" data-x="38400" data-y="0"><h1 id="testable-is-maintainable">Testable is maintainable</h1><ul><li>Code maintenance == managing change.</li><li>The less a function knows about the world, the more robust it is against
+then our tests become much simpler.</p></div></div><div class="step" step="26" data-reveal="1" data-x="41600" data-y="0"><h1 id="testable-is-maintainable">Testable is maintainable</h1><ul><li>Code maintenance == managing change.</li><li>The less a function knows about the world, the more robust it is against
 changes in the world ("principle of least knowledge").</li><li>The less a function knows about the world, the less of the world you
 have to set up in order to test it.</li></ul><div class="notes"><p>Function (or class, or module - whatever the system under test)</p><p>In this case, similarity is harder to test if it knows about GithubUser,
 because we have to set up a GithubUser (or a fake one) to feed to it for
 every test. And it's also more fragile, because if the name of the
 get_watched_repos method changes, it will break.</p><p>It knows more than it needs to know to do its job! By narrowing its vision
-of the world, we make it both easier to test and easier to maintain.</p></div></div><div class="step" step="25" data-x="40000" data-y="0"><h1 id="if-you-can-t-ditch-it-mock">If you can't ditch it, mock</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
+of the world, we make it both easier to test and easier to maintain.</p></div></div><div class="step" step="27" data-x="43200" data-y="0"><h1 id="if-you-can-t-ditch-it-mock">If you can't ditch it, mock</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
 <span class="kn">import</span> <span class="nn">json</span>
 
 <span class="n">API_BASE</span> <span class="o">=</span> <span class="s">'https://api.github.com'</span>
@@ -234,11 +250,11 @@ of the world, we make it both easier to test and easier to maintain.</p></div></
         <span class="k">return</span> <span class="p">{</span><span class="n">r</span><span class="p">[</span><span class="s">'full_name'</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">data</span><span class="p">}</span></pre><p><tt>urlopen</tt> is key; can't push it up to another layer.</p><div class="notes"><p>Consider testing the "get_watched_repos" method.</p><p>It has a collaborator; the "urlopen" function. This collaborator is
 essential to what it does, we can't push it up to another layer.</p><p>But we don't want our tests hitting the GitHub API every time we run them:
 that's not considerate, and makes our tests fragile to network issues or
-changes in the data at GitHub, which we can't control.</p></div></div><div class="step" step="26" data-reveal="1" data-x="41600" data-y="0"><h1 id="replacing-a-collaborator">Replacing a collaborator</h1><ul><li>Could add an argument ("dependency injection").</li><li>Or we can monkeypatch!</li></ul><div class="notes"><ul><li>But this argument would only be used in tests, so it's unfortunate to add
+changes in the data at GitHub, which we can't control.</p></div></div><div class="step" step="28" data-reveal="1" data-x="44800" data-y="0"><h1 id="replacing-a-collaborator">Replacing a collaborator</h1><ul><li>Could add an argument ("dependency injection").</li><li>Or we can monkeypatch!</li></ul><div class="notes"><ul><li>But this argument would only be used in tests, so it's unfortunate to add
 that complexity to the production code. In a static language this might be
 our only choice (and some languages have entire frameworks for it!), but
 in Python we have simpler options.</li><li>Python module namespaces are malleable at runtime, so we can temporarily
-make a name refer to something else for the duration of a test.</li></ul></div></div><div class="step" step="27" data-x="43200" data-y="0"><pre class="highlight code python"><span class="kn">import</span> <span class="nn">json</span>
+make a name refer to something else for the duration of a test.</li></ul></div></div><div class="step" step="29" data-x="46400" data-y="0"><pre class="highlight code python"><span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">gitrecs</span>
 
 <span class="k">class</span> <span class="nc">FakeResponse</span><span class="p">:</span>
@@ -261,7 +277,7 @@ make a name refer to something else for the duration of a test.</li></ul></div><
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">gitrecs</span><span class="o">.</span><span class="n">urlopen</span> <span class="o">=</span> <span class="n">_real_urlopen</span>
     <span class="k">assert</span> <span class="n">watched</span> <span class="o">==</span> <span class="p">{</span><span class="s">'a/repo'</span><span class="p">,</span> <span class="s">'b/repo'</span><span class="p">}</span></pre><div class="notes"><p>(Explain what this code is doing; note necessity of finally clause.)</p><p>But this test is ugly and complicated. There's a lot of accidental
-complexity obscuring the essence of the test.</p><p>Fortunately, once again there are tools to do this work for us.</p></div></div><div class="step" step="28" data-x="44800" data-y="0"><h1 id="with-unittest-mock">With unittest.mock</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">mock</span>
+complexity obscuring the essence of the test.</p><p>Fortunately, once again there are tools to do this work for us.</p></div></div><div class="step" step="30" data-x="48000" data-y="0"><h1 id="with-unittest-mock">With unittest.mock</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">mock</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">gitrecs</span>
 
@@ -287,7 +303,7 @@ transform it into a set of repo full_names. But that essence is obscured
 here by all this accidental complexity: the FakeResponse with a read()
 method, needing to encode stuff to bytes because that's what a urlopen
 response contains, needing to dump a data structure to JSON...</p><p>And if we need to write multiple tests for the data-structure handling,
-every single test will be cluttered with this additional cruft.</p></div></div><div class="step" step="29" data-x="46400" data-y="0"><h1 id="separating-concerns">Separating concerns</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
+every single test will be cluttered with this additional cruft.</p></div></div><div class="step" step="31" data-x="49600" data-y="0"><h1 id="separating-concerns">Separating concerns</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
 <span class="kn">import</span> <span class="nn">json</span>
 
 <span class="n">API_BASE</span> <span class="o">=</span> <span class="s">'https://api.github.com'</span>
@@ -308,7 +324,7 @@ every single test will be cluttered with this additional cruft.</p></div></div><
 parsed JSON data, so our get_watched_repos method doesn't need to concern
 itself with the details of how that data is fetched, decoded, and parsed.</p><p>This refactored code still passes the test we wrote, so we can trust that
 it's correct! But now it allows us to write much simpler tests for
-get_watched_repos.</p></div></div><div class="step" step="30" data-x="48000" data-y="0"><pre class="highlight code python"><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">mock</span>
+get_watched_repos.</p></div></div><div class="step" step="32" data-x="51200" data-y="0"><pre class="highlight code python"><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">mock</span>
 <span class="kn">import</span> <span class="nn">gitrecs</span>
 
 <span class="nd">@mock.patch</span><span class="p">(</span><span class="s">'gitrecs.call_api'</span><span class="p">)</span>
@@ -323,7 +339,7 @@ get_watched_repos.</p></div></div><div class="step" step="30" data-x="48000" dat
     <span class="n">call_api</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span>
         <span class="s">'/users/carljm/subscriptions'</span><span class="p">)</span></pre><div class="notes"><p>Ahh, much better. This test now clearly communicates its purpose, without
 distractions.</p><p>We also use a feature of mock to assert that get_watched_repos calls
-call_api with the correct arguments.</p></div></div><div class="step" step="31" data-x="49600" data-y="0"><pre class="highlight code python"><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">mock</span>
+call_api with the correct arguments.</p></div></div><div class="step" step="33" data-x="52800" data-y="0"><pre class="highlight code python"><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">mock</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">gitrecs</span>
 
@@ -353,32 +369,38 @@ they can all omit that complexity.</p><p>We have lost something with this change
 pass, even though <tt>get_watched_repos</tt> is now calling it with the wrong
 arguments. We are now testing both <tt>call_api</tt> and <tt>get_watched_repos</tt> in
 isolation; we are not testing that their integration - that they work
-together correctly.</p></div></div><div class="step" step="32" data-reveal="1" data-x="51200" data-y="0"><h1 id="unit-tests">Unit tests</h1><ul><li>Test one "unit" of code (function or method).</li><li>Isolated from complexities of collaborators.</li><li>Small &amp; fast!</li></ul><h1 id="integration-tests">Integration tests</h1><ul><li>Test that components talk to each other correctly.</li><li>Slower.</li></ul><div class="notes"><ul><li>These are the tests we've been looking at.</li><li>Unless collaborators are simple, replace with fakes.</li><li>Don't exercise very much code.</li><li>Can be at various levels: testing integration of two different
-methods/classes, up to end-to-end tests of the entire system.</li><li>Exercise more code; may also exercise external systems (e.g. database) and
-require more setup.</li></ul></div></div><div class="step" step="33" data-reveal="1" data-x="52800" data-y="0"><h1 id="use-unit-tests-for">Use unit tests for</h1><ul><li>Checking correctness of algorithms, data structures.</li><li>Testing edge cases and error cases, covering all sides of conditionals.</li><li>You can write lots, they're small &amp; fast!</li></ul><h1 id="use-integration-tests-for">Use integration tests for</h1><ul><li>Checking integration of components.</li><li>Checking integration with external systems.</li><li>Don't write too many.</li></ul><div class="notes"><p>Could give a whole talk on what is "too many"; basically, never write
-another integration test to test a case that could be tested with a unit
-test of the specific component where that case is handled.</p></div></div><div class="step" step="34" data-reveal="1" data-x="54400" data-y="0"><h1 id="test-runners">Test runners</h1><p>A brief synopsis and digression</p><ul><li>We saw <a href="http://pytest.org">py.test</a> in action: <tt>pip install pytest; py.test</tt></li><li><a href="https://nose.readthedocs.org/">Nose</a> is similar: <tt>pip install nose; nosetests</tt></li><li>Both can run simple function tests with asserts.</li><li><a href="http://docs.python.org/3.3/library/unittest.html">unittest</a> is in the standard library, similar to "xUnit" test frameworks in
-various languages. Tests require a bit more boilerplate. <tt>python -m unittest
-discover</tt></li><li>Others: <a href="http://twistedmatrix.com/trac/wiki/TwistedTrial">twisted.trial</a>, <a href="https://pypi.python.org/pypi/zope.testrunner">zope.testrunner</a></li><li>I like py.test; use whatever you like.</li></ul><div class="notes"><p>Don't waste too much time worrying about this, you'll do just fine with any
-of them. Better to pick one and dive in and start writing tests!</p></div></div><div class="step" step="35" data-x="56000" data-y="0"><h1 id="a-unittest-test">A unittest test</h1><pre class="highlight code python"><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">TestCase</span>
-<span class="kn">from</span> <span class="nn">gitrecs</span> <span class="kn">import</span> <span class="n">similarity</span>
-
-<span class="k">class</span> <span class="nc">TestSimilarity</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">test_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">score</span> <span class="o">=</span> <span class="n">similarity</span><span class="p">({},</span> <span class="p">{})</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">test_half</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">score</span> <span class="o">=</span> <span class="n">similarity</span><span class="p">({</span><span class="s">'a'</span><span class="p">},</span> <span class="p">{</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">})</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span></pre><div class="notes"><p>Note the use of methods on self (assertEqual and friends) rather than simple
-asserts.</p></div></div><div class="step" step="36" data-reveal="1" data-x="57600" data-y="0"><h1 id="characteristics-of-good-tests">Characteristics of good tests</h1><ul><li>Short.</li><li>Fast.</li><li>Isolated.</li><li>Test one thing.</li></ul><div class="notes"><ul><li>Long tests are either testing too much in a single test, or are requiring
-too much setup. They might be telling you the code they're testing needs
-refactoring.</li><li>Tests that take a long time to run, don't get run very often.</li><li>Tests should pass or fail reliably depending on the code under test, not
-other random factors (which other tests ran first, what data you left
-lying around in your database, whether some website is up). This means
-where tests depend on the state of the world, you need to set up that
-state in a controlled way.</li><li>One failure doesn't conceal other problems. When a test fails, you know
-exactly what's broken.</li></ul></div></div><div class="step" step="37" id="questions" data-x="59200" data-y="0"><h1 id="questions">Questions?</h1><ul><li><a href="http://oddbird.github.com/start-testing">oddbird.github.com/start-testing</a></li><li><a href="http://pytest.org/">pytest.org</a></li><li><a href="http://nedbatchelder.com/code/coverage/">nedbatchelder.com/code/coverage/</a></li><li><a href="http://www.voidspace.org.uk/python/mock/">www.voidspace.org.uk/python/mock/</a></li><li><a href="http://tox.readthedocs.org">tox.readthedocs.org</a></li><li><a href="http://webtest.pythonpaste.org">webtest.pythonpaste.org</a></li></ul><p><div class="vcard">
+together correctly.</p></div></div><div class="step" step="34" data-reveal="1" data-x="54400" data-y="0"><h1 id="unit-tests">Unit tests</h1><ul><li>Test one "unit" of code (function or method).</li><li>Isolated from complexities of collaborators.</li><li>Small &amp; fast!</li></ul><h1 id="integration-tests">Integration tests</h1><ul><li>Test that components talk to each other correctly.</li><li>Slower.</li></ul><div class="notes"><p>Unit.</p><ul><li>These are the tests we've been looking at.</li><li>Unless collaborators are simple, replace with fakes.</li><li>Don't exercise very much code.</li></ul><p>Integration.</p><ul><li>Can be at various levels: testing integration of two different
+methods/classes, up to end-to-end tests of the entire system (these are
+sometimes called acceptance tests).</li><li>Exercise more code; may also exercise external systems (e.g. database) and
+require more setup.</li></ul></div></div><div class="step" step="35" data-reveal="1" data-x="56000" data-y="0"><h1 id="use-unit-tests-for">Use unit tests for</h1><ul><li>Checking correctness of algorithms, data structures.</li><li>Testing edge cases and error cases, covering all sides of conditionals.</li><li>You can write lots, they're small &amp; fast!</li></ul><h1 id="use-integration-tests-for">Use integration tests for</h1><ul><li>Checking integration of components.</li><li>Checking integration with external systems.</li><li>In a web app, often HTTP request/response tests.</li><li>Don't write one when a unit test would suffice.</li></ul><div class="notes"><p>E.g. if your similarity function breaks with two empty sets, like we saw at
+the beginning of the talk, write a unit test for your similarity function,
+not an integration test that sets up two fake github users watching no repos
+and runs through everything.</p></div></div><div class="step" step="36" data-reveal="1" data-x="57600" data-y="0"><h1 id="a-feature-adding-workflow">A feature-adding workflow</h1><ul><li>Write an integration test describing the working feature.</li><li>Start implementation from the outside in.</li><li>Programming by wish. "I wish I had a function that..." and stub it.</li><li>For each stubbed function, write unit tests describing how it should actually
+work and complete the implementation to make those tests pass.</li><li>Spikes: when you need to just write a bunch of exploratory code to figure out
+the problem.</li></ul><div class="notes"><p>The question always arises: write your tests first or last? You'll get
+benefit from your tests either way, so do whatever works. I like writing
+tests first.</p><p>Spikes: the test-driven development religion says when you're done with a
+spike, you delete it and rewrite with test-first development, using the
+knowledge you gained from the spike. TBH, I don't usually do this, I just
+add tests and refactor the spiked code as I go to make it more testable.</p></div></div><div class="step" step="37" data-x="59200" data-y="0"><p>Example?</p></div><div class="step" step="38" data-reveal="1" data-x="60800" data-y="0"><h1 id="a-bug-fixing-workflow">A bug-fixing workflow</h1><ul><li>Write a test that fails because of the bug (a regression test).</li><li>Should be a unit test, unless the bug is due to bad interaction between
+components that are individually working correctly.</li><li>Fix the code so the test passes.</li><li>Ship it!</li></ul><div class="notes"><p>Always, always step one. This is often part of finding and understanding the
+bug. If you haven't written a failing test, you don't have a bug identified
+yet.</p></div></div><div class="step" step="39" data-reveal="1" data-x="62400" data-y="0"><h1 id="a-retrofitting-workflow">A retrofitting workflow</h1><ul><li>You have a codebase without tests. It probably isn't structured for testability.</li><li>Start with integration tests verifying the features you care most about.</li><li>Even if you stop there, you still win!</li><li>The integration tests give you confidence to refactor the code as you add
+unit tests.</li><li>Use code coverage as a rough progress-tracking metric.</li></ul><div class="notes"><p>definition of legacy code: code without tests.</p></div></div><div class="step" step="40" data-x="64000" data-y="0"><h1 id="see-also">See also:</h1><ul><li><a href="http://tox.readthedocs.org">tox</a>: test your library across multiple Python versions and configurations.</li><li><a href="http://webtest.pythonpaste.org">WebTest</a>: request/response testing for WSGI web apps.</li><li><a href="http://pythonhosted.org/lettuce/">lettuce</a>: write integration tests in English (Python port of Ruby's Cucumber).</li></ul><div class="notes"><p>Didn't have time to cover everything in depth, but here are a few more
+testing tools you should check out:</p><ul><li>If you're releasing a Python library that other devs will use, you
+probably want it to support at least two or three different versions of
+Python, plus possibly different versions of dependencies as well. This can
+quickly grow to a matrix of a size that's very hard to manage
+manually. Tox makes it easy to run your tests across this whole matrix.</li><li>If you're writing a web app, a lot of your integration tests will be "send
+a request, check the response" - WebTest is a great tool for these tests.</li><li>Often integration tests for big systems get kind of long; they have to do
+a fair bit of setup and it isn't trivial to make the assertions you want
+to make. You can address this with utility functions and classes, but
+there are also tools (part of a methodology called "Behavior Driven
+Development") that let you write your acceptance tests in English phrases,
+and define the meaning of those phrases in code. Some people like it, some
+don't; you can try out "lettuce" and see what you think.</li></ul></div></div><div class="step" step="41" data-reveal="1" data-x="65600" data-y="0"><h1 id="coding-with-tests">Coding with tests...</h1><ul><li>Is fun and satisfying!</li><li>Reduces repetitive manual testing.</li><li>Replaces fear with confidence.</li><li>Results in better code.</li><li>Worth the effort!</li></ul><div class="notes"><ul><li>Nothing like the satisfaction of seeing those rows of dots when all your
+tests are passing.</li></ul><p>It's not easy: test code is real code and requires discipline, engineering,
+and investment to make it correct and maintainable. But it's worth it!</p></div></div><div class="step" step="42" id="questions" data-x="67200" data-y="0"><h1 id="questions">Questions?</h1><ul><li><a href="http://oddbird.github.com/start-testing">oddbird.github.com/start-testing</a></li><li><a href="http://pytest.org/">pytest.org</a></li><li><a href="http://nedbatchelder.com/code/coverage/">nedbatchelder.com/code/coverage/</a></li><li><a href="http://www.voidspace.org.uk/python/mock/">www.voidspace.org.uk/python/mock/</a></li><li><a href="http://tox.readthedocs.org">tox.readthedocs.org</a></li><li><a href="http://webtest.pythonpaste.org">webtest.pythonpaste.org</a></li></ul><p><div class="vcard">
 <a href="http://www.oddbird.net">
   <img src="images/logo.svg" alt="OddBird" class="logo" />
 </a>

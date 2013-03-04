@@ -21,6 +21,7 @@ Getting started testing
    Thanks for invite (thank Matt, Dave, WebFilings)
 
    PyCon talk - tell me what sucks! Especially tell me what I should cut out!
+   All feedback welcome, even "it was boring, add more pictures of cats."
 
    How many have written tests? How many measure test coverage? How many
    maintain 100% coverage?
@@ -528,6 +529,66 @@ Tests pass! Ship it!
 
 :data-reveal: 1
 
+Test runners
+------------
+
+A brief synopsis and digression
+
+* We saw `py.test`_ in action: ``pip install pytest; py.test``
+
+  .. _py.test: http://pytest.org
+
+* `Nose`_ is similar: ``pip install nose; nosetests``
+
+  .. _Nose: https://nose.readthedocs.org/
+
+* Both can run simple function tests with asserts.
+
+* `unittest`_ is in the standard library, similar to "xUnit" test frameworks in
+  various languages. Tests require a bit more boilerplate. ``python -m unittest
+  discover``
+
+  .. _unittest: http://docs.python.org/3.3/library/unittest.html
+
+* Others: `twisted.trial`_, `zope.testrunner`_
+
+  .. _twisted.trial: http://twistedmatrix.com/trac/wiki/TwistedTrial
+  .. _zope.testrunner: https://pypi.python.org/pypi/zope.testrunner
+
+.. note::
+
+   Don't waste too much time worrying about this, you'll do just fine with any
+   of them. Better to pick one and dive in and start writing tests! I like
+   py.test, use what you like.
+
+----
+
+A unittest test
+---------------
+
+.. code:: python
+
+   from unittest import TestCase
+   from gitrecs import similarity
+
+   class TestSimilarity(TestCase):
+       def test_empty(self):
+           score = similarity({}, {})
+           self.assertEqual(score, 0.0)
+
+       def test_half(self):
+           score = similarity({'a'}, {'a', 'b'})
+           self.assertEqual(score, 0.5)
+
+.. note::
+
+   Note the use of methods on self (assertEqual and friends) rather than simple
+   asserts.
+
+----
+
+:data-reveal: 1
+
 Why write tests?
 ----------------
 
@@ -905,14 +966,19 @@ Integration tests
 
 .. note::
 
+   Unit.
+
    * These are the tests we've been looking at.
 
    * Unless collaborators are simple, replace with fakes.
 
    * Don't exercise very much code.
 
+   Integration.
+
    * Can be at various levels: testing integration of two different
-     methods/classes, up to end-to-end tests of the entire system.
+     methods/classes, up to end-to-end tests of the entire system (these are
+     sometimes called acceptance tests).
 
    * Exercise more code; may also exercise external systems (e.g. database) and
      require more setup.
@@ -938,106 +1004,158 @@ Use integration tests for
 
 * Checking integration with external systems.
 
-* Don't write too many.
+* In a web app, often HTTP request/response tests.
+
+* Don't write one when a unit test would suffice.
 
 .. note::
 
-   Could give a whole talk on what is "too many"; basically, never write
-   another integration test to test a case that could be tested with a unit
-   test of the specific component where that case is handled.
+   E.g. if your similarity function breaks with two empty sets, like we saw at
+   the beginning of the talk, write a unit test for your similarity function,
+   not an integration test that sets up two fake github users watching no repos
+   and runs through everything.
 
 ----
 
 :data-reveal: 1
 
-Test runners
-------------
+A feature-adding workflow
+-------------------------
 
-A brief synopsis and digression
+* Write an integration test describing the working feature.
 
-* We saw `py.test`_ in action: ``pip install pytest; py.test``
+* Start implementation from the outside in.
 
-  .. _py.test: http://pytest.org
+* Programming by wish. "I wish I had a function that..." and stub it.
 
-* `Nose`_ is similar: ``pip install nose; nosetests``
+* For each stubbed function, write unit tests describing how it should actually
+  work and complete the implementation to make those tests pass.
 
-  .. _Nose: https://nose.readthedocs.org/
-
-* Both can run simple function tests with asserts.
-
-* `unittest`_ is in the standard library, similar to "xUnit" test frameworks in
-  various languages. Tests require a bit more boilerplate. ``python -m unittest
-  discover``
-
-  .. _unittest: http://docs.python.org/3.3/library/unittest.html
-
-* Others: `twisted.trial`_, `zope.testrunner`_
-
-  .. _twisted.trial: http://twistedmatrix.com/trac/wiki/TwistedTrial
-  .. _zope.testrunner: https://pypi.python.org/pypi/zope.testrunner
-
-* I like py.test; use whatever you like.
+* Spikes: when you need to just write a bunch of exploratory code to figure out
+  the problem.
 
 .. note::
 
-   Don't waste too much time worrying about this, you'll do just fine with any
-   of them. Better to pick one and dive in and start writing tests!
+   The question always arises: write your tests first or last? You'll get
+   benefit from your tests either way, so do whatever works. I like writing
+   tests first.
+
+   Spikes: the test-driven development religion says when you're done with a
+   spike, you delete it and rewrite with test-first development, using the
+   knowledge you gained from the spike. TBH, I don't usually do this, I just
+   add tests and refactor the spiked code as I go to make it more testable.
 
 ----
 
-A unittest test
----------------
-
-.. code:: python
-
-   from unittest import TestCase
-   from gitrecs import similarity
-
-   class TestSimilarity(TestCase):
-       def test_empty(self):
-           score = similarity({}, {})
-           self.assertEqual(score, 0.0)
-
-       def test_half(self):
-           score = similarity({'a'}, {'a', 'b'})
-           self.assertEqual(score, 0.5)
-
-.. note::
-
-   Note the use of methods on self (assertEqual and friends) rather than simple
-   asserts.
+Example?
 
 ----
 
 :data-reveal: 1
 
-Characteristics of good tests
------------------------------
+A bug-fixing workflow
+---------------------
 
-* Short.
+* Write a test that fails because of the bug (a regression test).
 
-* Fast.
+* Should be a unit test, unless the bug is due to bad interaction between
+  components that are individually working correctly.
 
-* Isolated.
+* Fix the code so the test passes.
 
-* Test one thing.
+* Ship it!
 
 .. note::
 
-   * Long tests are either testing too much in a single test, or are requiring
-     too much setup. They might be telling you the code they're testing needs
-     refactoring.
+   Always, always step one. This is often part of finding and understanding the
+   bug. If you haven't written a failing test, you don't have a bug identified
+   yet.
 
-   * Tests that take a long time to run, don't get run very often.
+----
 
-   * Tests should pass or fail reliably depending on the code under test, not
-     other random factors (which other tests ran first, what data you left
-     lying around in your database, whether some website is up). This means
-     where tests depend on the state of the world, you need to set up that
-     state in a controlled way.
+:data-reveal: 1
 
-   * One failure doesn't conceal other problems. When a test fails, you know
-     exactly what's broken.
+A retrofitting workflow
+-----------------------
+
+* You have a codebase without tests. It probably isn't structured for testability.
+
+* Start with integration tests verifying the features you care most about.
+
+* Even if you stop there, you still win!
+
+* The integration tests give you confidence to refactor the code as you add
+  unit tests.
+
+* Use code coverage as a rough progress-tracking metric.
+
+.. note::
+
+   definition of legacy code: code without tests.
+
+----
+
+See also:
+---------
+
+* `tox`_: test your library across multiple Python versions and configurations.
+
+  .. _tox: http://tox.readthedocs.org
+
+* `WebTest`_: request/response testing for WSGI web apps.
+
+  .. _WebTest: http://webtest.pythonpaste.org
+
+* `lettuce`_: write integration tests in English (Python port of Ruby's Cucumber).
+
+  .. _lettuce: http://pythonhosted.org/lettuce/
+
+.. note::
+
+   Didn't have time to cover everything in depth, but here are a few more
+   testing tools you should check out:
+
+   * If you're releasing a Python library that other devs will use, you
+     probably want it to support at least two or three different versions of
+     Python, plus possibly different versions of dependencies as well. This can
+     quickly grow to a matrix of a size that's very hard to manage
+     manually. Tox makes it easy to run your tests across this whole matrix.
+
+   * If you're writing a web app, a lot of your integration tests will be "send
+     a request, check the response" - WebTest is a great tool for these tests.
+
+   * Often integration tests for big systems get kind of long; they have to do
+     a fair bit of setup and it isn't trivial to make the assertions you want
+     to make. You can address this with utility functions and classes, but
+     there are also tools (part of a methodology called "Behavior Driven
+     Development") that let you write your acceptance tests in English phrases,
+     and define the meaning of those phrases in code. Some people like it, some
+     don't; you can try out "lettuce" and see what you think.
+
+----
+
+:data-reveal: 1
+
+Coding with tests...
+--------------------
+
+* Is fun and satisfying!
+
+* Reduces repetitive manual testing.
+
+* Replaces fear with confidence.
+
+* Results in better code.
+
+* Worth the effort!
+
+.. note::
+
+   * Nothing like the satisfaction of seeing those rows of dots when all your
+     tests are passing.
+
+   It's not easy: test code is real code and requires discipline, engineering,
+   and investment to make it correct and maintainable. But it's worth it!
 
 ----
 
