@@ -1047,10 +1047,6 @@ A feature-adding workflow
 
 ----
 
-Example?
-
-----
-
 :data-reveal: 1
 
 A bug-fixing workflow
