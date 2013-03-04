@@ -1,8 +1,6 @@
 TODO
 ====
 
-* Add coverage.py demo.
-
 * Add example of feature-adding workflow?
 
 * Better styling for inline literals, especially within headers.

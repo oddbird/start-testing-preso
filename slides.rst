@@ -477,7 +477,9 @@ Just for kicks:
 
    For repetitive tests like these that just call the same function on various
    data and assert on the output, py.test gives us a way to clean up that
-   repetition: parameterized tests.
+   repetition: parameterized tests. It runs the test once with each parameter
+   set, and they are treated as separate tests, each one can pass or fail
+   individually.
 
 ----
 
@@ -1088,6 +1090,41 @@ A retrofitting workflow
 .. note::
 
    definition of legacy code: code without tests.
+
+----
+
+Measuring code coverage
+-----------------------
+
+* ``pip install coverage``
+
+* ``coverage run --branch `which py.test```
+
+* ``coverage html``
+
+.. note::
+
+   ``--branch``: record not only which lines were and weren't executed, but
+   also whether all branches of a conditional were taken.
+
+   ``coverage run`` is the most flexible way to run coverage (can run any
+   python script); there are also plugins for py.test and nose that give it
+   more integration with the test runner.
+
+   ``coverage html`` generates an HTML report.
+
+----
+
+.. image:: images/coverage.png
+   :width: 800px
+
+.. note::
+
+   100% coverage only tells you that every line of code in your program can run
+   without error. That's a good minimum baseline; it doesn't tell you whether
+   those lines of code are actually doing the right thing! It is a useful way
+   to make sure that you have at least one test checking every case that is
+   handled by your code (including error cases).
 
 ----
 
