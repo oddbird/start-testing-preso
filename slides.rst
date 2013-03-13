@@ -16,18 +16,6 @@ Getting started testing
 
 |hcard|
 
-.. note::
-
-   Thanks for invite (thank Matt, Dave, WebFilings)
-
-   PyCon talk - tell me what sucks! Especially tell me what I should cut out!
-   All feedback welcome, even "it was boring, add more pictures of cats."
-
-   How many have written tests? How many measure test coverage? How many
-   maintain 100% coverage?
-
-   (Beginner-level talk, may be review for some, hopefully some new things.)
-
 ----
 
 :id: thistalk
