@@ -365,8 +365,8 @@ A bug!
 ::
 
    test_empty FAILED: division by zero
-   test_quarter passed.
-   test_half passed.
+   test_sets passed.
+   test_list_with_dupes passed.
 
 
 ----

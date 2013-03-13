@@ -6,8 +6,6 @@ TODO
 * Remove the non-set version of similarity: not worth the extra time, too much
   hammering on a simple point (manual testing sucks).
 
-* Fix output portion of manual-test-runner slide.
-
 * Consider removing or moving parametrize slide? Breaks the flow.
 
 * Show code example for dependency injection?
