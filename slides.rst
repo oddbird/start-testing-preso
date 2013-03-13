@@ -118,11 +118,9 @@ Let's make a thing!
 
    A GitHub recommendation engine!
 
-   Find the projects you ought to know about, but don't yet, based on the
-   projects other people are watching who tend to watch the same projects you
-   do.
+   Find the projects you ought to know about...
 
-   (It's been done already. Oh well.)
+   It's been done already. Oh well.
 
 ----
 
@@ -150,13 +148,11 @@ gitrecs.py
 
 .. note::
 
-   Here's a function to give a similarity score between two users, as a
-   floating point number between 0 and 1. We calculate the size of the
-   intersection between the two lists and the size of the union of the two
-   lists, and return the Jaccard index, which is intersection over union.
+   Similarity score, 0 to 1.
 
-   Now of course we want to make sure it works, so let's try it out in the
-   shell!
+   Jaccard index: intersection over union.
+
+   Now of course we want to make sure it works!
 
 ----
 
@@ -178,8 +174,7 @@ It works!
 
    So far, so good!
 
-   But I'm guessing a bunch of you are on the tip of your seats wanting to tell
-   me about the bugs you already spotted in this implementation. Here's one...
+   But here's a bug...
 
 ----
 
@@ -194,9 +189,7 @@ Uh oh
 .. note::
 
    Jaccard index is a set metric, and our naive implementation with lists
-   doesn't handle duplicates correctly. The union of these should be 2, making
-   the similarity score 1/2, but instead we calculate a union of 3 and so get a
-   similarity score of 1/3.
+   doesn't handle duplicates correctly. Should be 1/2, got 1/3.
 
    Fortunately, Python's got an excellent built-in set data structure, so let's
    rewrite to use that instead and fix this bug!
@@ -235,8 +228,7 @@ Fixed!
 
 .. note::
 
-   So we fire up the shell again and re-type that last test that failed. Great,
-   that works!
+   Great, works!
 
    But we totally rewrote it, better make sure we didn't break anything...
 
@@ -628,10 +620,10 @@ The first draft
 .. note::
 
    You may have been thinking, of course tests are easy to write when you're
-   testing nice simple pure functions like that similarity function.
+   testing nice simple functions like that similarity function.
 
-   Here's a secret: that nice simple pure function wasn't the first version of
-   similarity that I wrote. The first version looked more like this.
+   Here's a secret: that wasn't the first version of similarity that I
+   wrote. The first version looked more like this.
 
    Imagine writing tests for this similarity function.
 
@@ -823,19 +815,17 @@ With unittest.mock
 
 .. note::
 
-   (In Python 2, need to ``pip install mock`` and ``import mock``.)
+   (Python 2: ``pip install mock`` and ``import mock``.)
 
    Now mock takes care of the dirty work of replacing ``gitrecs.urlopen`` and
    making sure it gets replaced back at the end of the test, making our test
    shorter and clearer.
 
-   But I'm still not satisfied with it!
-
-   The essence of this test is that if GitHub returns this list of dicts, we
-   transform it into a set of repo full_names. But that essence is obscured
-   here by all this accidental complexity: the FakeResponse with a read()
-   method, needing to encode stuff to bytes because that's what a urlopen
-   response contains, needing to dump a data structure to JSON...
+   But I'm still not satisfied with it! Essence: if GitHub returns this list of
+   dicts, we transform it into a set of repo full_names. Essence obscured here
+   by all this accidental complexity: the FakeResponse with a read() method,
+   needing to encode stuff to bytes because that's what a urlopen response
+   contains, needing to dump a data structure to JSON...
 
    And if we need to write multiple tests for the data-structure handling,
    every single test will be cluttered with this additional cruft.
