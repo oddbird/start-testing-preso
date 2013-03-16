@@ -26,40 +26,13 @@ This talk
 
 * Why test?
 
-* How to test?
+* How to write tests?
 
-* When to test?
+* How to run your tests?
 
-* How much to test?
+* What kinds of tests to write?
 
-* What if...?
-
-|lightbulb|
-
-.. |lightbulb| raw:: html
-
-   <img src="images/lightbulb.svg" alt="light bulb" class="innerStep" height="300px" />
-
-.. note::
-
-   So here's the plan for the next half hour:
-
-   * We'll discuss (briefly!) why to write tests.
-
-   * We'll talk about how to write tests in Python, with lots of code examples
-     and tool recommendations.
-
-   * We'll talk about when to write your tests,
-
-   * ...which tests and how many tests to write.
-
-   * And we'll talk about some common what-if scenarios, like adding tests to a
-     large untested codebase.
-
-   Hopefully by the end the testing lightbulb will turn on (if it hasn't
-   already), and you'll be so hooked you won't even be able to sleep tonight
-   until you've written a bunch of tests.
-
+* Testing workflows.
 
 ----
 
@@ -90,15 +63,6 @@ Me
 
 ----
 
-.. image:: images/logo.svg
-   :width: 800px
-
-.. note::
-
-   I work at OddBird, we build beautiful web apps, you can hire us!
-
-----
-
 Let's make a thing!
 -------------------
 
@@ -121,7 +85,7 @@ gitrecs.py
        """
        Return similarity score for two users.
 
-       Users represented as list of watched repos.
+       Users represented as iterables of watched repo names.
 
        Score is Jaccard index (intersection / union).
 
@@ -139,6 +103,8 @@ gitrecs.py
    Similarity score, 0 to 1.
 
    Jaccard index: intersection over union.
+
+   Terrible implementation: buggy and slow. Software!
 
    Now of course we want to make sure it works!
 
@@ -176,8 +142,8 @@ Uh oh
 
 .. note::
 
-   Jaccard index is a set metric, and our naive implementation with lists
-   doesn't handle duplicates correctly. Should be 1/2, got 1/3.
+   Jaccard index is a set metric, and our bad implementation doesn't handle
+   duplicates correctly. Should be 1/2, got 1/3.
 
    Fortunately, Python's got an excellent built-in set data structure, so let's
    rewrite to use that instead and fix this bug!
@@ -193,7 +159,7 @@ Now with more set
        """
        Return similarity score for two users.
 
-       Users represented as list of watched repos.
+       Users represented as iterable of watched repo names.
 
        Score is Jaccard index (intersection / union).
 
@@ -254,6 +220,8 @@ This gets old.
 * Error-prone.
 
 .. note::
+
+   * The bigger the system, the worse this gets. (14th survey page.)
 
    * What happens with boring tasks? I skip them! Now I'll ship broken code!
 
@@ -425,41 +393,12 @@ pip install pytest
 
    Run py.test - it automatically finds our tests (because they are in a file
    whose name begins with "test", and each test function's name begins with
-   "test") and runs them, with isolation so that even if one fails, they all run.
+   "test") and runs them, with isolation so that even if one fails, they all
+   run. (Can also run just one test file, or directory.)
 
    It shows us the test file it found, shows a dot for each passed test and an
-   F for each failed one.
-
-   And we get some nice helpful debugging output around the failure too.
-
-----
-
-Just for kicks:
----------------
-
-.. ignore-next-block
-.. code:: python
-
-   import pytest
-
-   from gitrecs import similarity
-
-   @pytest.mark.parametrize('data', [
-       (({}, {}), 0.0),
-       (({'a', 'b'}, {'b', 'c', 'd'}), 0.25),
-       ((['a', 'a'], ['a', 'b']), 0.5)
-       ])
-   def test_similarity(data):
-       args, expected = data
-       assert similarity(*args) == expected
-
-.. note::
-
-   For repetitive tests like these that just call the same function on various
-   data and assert on the output, py.test gives us a way to clean up that
-   repetition: parameterized tests. It runs the test once with each parameter
-   set, and they are treated as separate tests, each one can pass or fail
-   individually.
+   F for each failed one. And we get some nice helpful debugging output around
+   the failure too.
 
 ----
 
@@ -472,7 +411,7 @@ Now let's fix that bug.
        """
        Return similarity score for two users.
 
-       Users represented as list of watched repos.
+       Users represented as iterable of watched repos.
 
        Score is Jaccard index (intersection / union).
 
@@ -539,9 +478,8 @@ A brief synopsis and digression
 
 .. note::
 
-   Don't waste too much time worrying about this, you'll do just fine with any
-   of them. Better to pick one and dive in and start writing tests! I like
-   py.test, use what you like.
+   If all these choices are overwhelming, don't worry about it. They're all
+   fine, just pick one and run with it.
 
 ----
 
@@ -558,8 +496,12 @@ A unittest test
            score = similarity({}, {})
            self.assertEqual(score, 0.0)
 
-       def test_half(self):
+       def test_sets(self):
            score = similarity({'a'}, {'a', 'b'})
+           self.assertEqual(score, 0.5)
+
+       def test_list_with_dupes(self):
+           score = similarity(['a', 'a'], ['a', 'b'])
            self.assertEqual(score, 0.5)
 
 .. note::
@@ -576,6 +518,8 @@ Why write tests?
 
 #. Tests tell you when your code is broken.
 
+#. Tests help later developers understand your code.
+
 #. Tests improve the design of your code.
 
 .. note::
@@ -583,6 +527,11 @@ Why write tests?
    #. ... as we just saw. "More fun to write tests on weekdays than fix bugs on
       weekends." This is the primary reason most people write tests, and it's a
       plenty good one.
+
+   #. A test is a form of documentation saying "this is what's important about
+      this code." In a well-tested codebase, reading the tests along with the
+      code they are testing is a great way to understand what that code is
+      supposed to be doing.
 
    #. ...if you listen to them. How? Let's look at an example.
 
@@ -629,7 +578,13 @@ Harder to test
        def get_watched_repos(self):
            return watched
 
-   def test_similarity():
+   def test_empty():
+       assert similarity(
+           FakeGithubUser({}),
+           FakeGithubUser({})
+           ) == 0.5
+
+   def test_sets():
        assert similarity(
            FakeGithubUser({'a'}),
            FakeGithubUser({'a', 'b'})
@@ -647,10 +602,10 @@ Harder to test
    the design of your code is making testing harder than it should be.
 
    In this case, the collaborator is an avoidable distraction. What we really
-   want to test is the similarity calculation; GithubUser is an irrelevant
-   distraction. We can extract a similarity function that operates just on sets
-   of repos so it doesn't need to know anything about the GithubUser class, and
-   then our tests become much simpler.
+   want to test is the similarity calculation; GithubUser is irrelevant. We can
+   extract a similarity function that operates just on sets of repos so it
+   doesn't need to know anything about the GithubUser class, and then our tests
+   become much simpler.
 
 ----
 
@@ -681,250 +636,6 @@ Testable is maintainable
 
 ----
 
-If you can't ditch it, mock
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code:: python
-
-   from urllib.request import urlopen
-   import json
-
-   API_BASE = 'https://api.github.com'
-
-   class GithubUser:
-       def __init__(self, username):
-           self.username = username
-
-       def get_watched_repos(self):
-           url = API_BASE + '/users/{}/subscriptions'.format(
-               self.username)
-           response = urlopen(url)
-           data = json.loads(response.read().decode('utf-8'))
-           return {r['full_name'] for r in data}
-
-``urlopen`` is key; can't push it up to another layer.
-
-.. note::
-
-   Consider testing the "get_watched_repos" method.
-
-   It has a collaborator; the "urlopen" function. This collaborator is
-   essential to what it does, we can't push it up to another layer.
-
-   But we don't want our tests hitting the GitHub API every time we run them:
-   that's not considerate, and makes our tests fragile to network issues or
-   changes in the data at GitHub, which we can't control.
-
-----
-
-:data-reveal: 1
-
-Replacing a collaborator
-------------------------
-
-* Could add an argument ("dependency injection").
-
-* Or we can monkeypatch!
-
-.. note::
-
-   * But this argument would only be used in tests, so it's unfortunate to add
-     that complexity to the production code. In a static language this might be
-     our only choice (and some languages have entire frameworks for it!), but
-     in Python we have simpler options.
-
-   * Python module namespaces are malleable at runtime, so we can temporarily
-     make a name refer to something else for the duration of a test.
-
-----
-
-.. code:: python
-
-   import json
-   import gitrecs
-
-   class FakeResponse:
-       def __init__(self, content):
-           self.content = content
-
-       def read(self):
-           return self.content
-
-   def test_get_watched_repos():
-       data = json.dumps(
-           [{'full_name': 'a/repo'}, {'full_name': 'b/repo'},
-            ]).encode('utf-8')
-       fake_urlopen = lambda url: FakeResponse(data)
-       _real_urlopen = gitrecs.urlopen
-       gitrecs.urlopen = fake_urlopen
-       try:
-           user = gitrecs.GithubUser('carljm')
-           watched = user.get_watched_repos()
-       finally:
-           gitrecs.urlopen = _real_urlopen
-       assert watched == {'a/repo', 'b/repo'}
-
-.. note::
-
-   (Explain what this code is doing; note necessity of finally clause.)
-
-   But this test is ugly and complicated. There's a lot of accidental
-   complexity obscuring the essence of the test.
-
-   Fortunately, once again there are tools to do this work for us.
-
-----
-
-With unittest.mock
-------------------
-
-.. code:: python
-
-   from unittest import mock
-   import json
-   import gitrecs
-
-   class FakeResponse:
-       def __init__(self, content):
-           self.content = content
-
-       def read(self):
-           return self.content
-
-   @mock.patch('gitrecs.urlopen')
-   def test_get_watched_repos(urlopen):
-       data = json.dumps(
-           [{'full_name': 'a/repo'}, {'full_name': 'b/repo'},
-            ]).encode('utf-8')
-       urlopen.return_value = FakeResponse(data)
-       user = gitrecs.GithubUser('carljm')
-       watched = user.get_watched_repos()
-       assert watched == {'a/repo', 'b/repo'}
-
-.. note::
-
-   (Python 2: ``pip install mock`` and ``import mock``.)
-
-   Now mock takes care of the dirty work of replacing ``gitrecs.urlopen`` and
-   making sure it gets replaced back at the end of the test, making our test
-   shorter and clearer.
-
-   But I'm still not satisfied with it! Essence: if GitHub returns this list of
-   dicts, we transform it into a set of repo full_names. Essence obscured here
-   by all this accidental complexity: the FakeResponse with a read() method,
-   needing to encode stuff to bytes because that's what a urlopen response
-   contains, needing to dump a data structure to JSON...
-
-   And if we need to write multiple tests for the data-structure handling,
-   every single test will be cluttered with this additional cruft.
-
-----
-
-Separating concerns
--------------------
-
-.. code:: python
-
-   from urllib.request import urlopen
-   import json
-
-   API_BASE = 'https://api.github.com'
-
-   def call_api(path):
-       url = API_BASE + path
-       response = urlopen(url)
-       return json.loads(response.read().decode('utf-8'))
-
-   class GithubUser:
-       def __init__(self, username):
-           self.username = username
-
-       def get_watched_repos(self):
-           data = call_api(
-               '/users/{}/subscriptions'.format(self.username))
-           return {r['full_name'] for r in data}
-
-.. note::
-
-   Now we split out the details of calling GitHub's API and returning the
-   parsed JSON data, so our get_watched_repos method doesn't need to concern
-   itself with the details of how that data is fetched, decoded, and parsed.
-
-   This refactored code still passes the test we wrote, so we can trust that
-   it's correct! But now it allows us to write much simpler tests for
-   get_watched_repos.
-
-----
-
-.. code:: python
-
-   from unittest import mock
-   import gitrecs
-
-   @mock.patch('gitrecs.call_api')
-   def test_get_watched_repos(call_api):
-       data = [{'full_name': 'a/r'}, {'full_name': 'b/r'}]
-       call_api.return_value = data
-
-       user = gitrecs.GithubUser('carljm')
-       watched = user.get_watched_repos()
-
-       assert watched == {'a/r', 'b/r'}
-       call_api.assert_called_with(
-           '/users/carljm/subscriptions')
-
-.. note::
-
-   Ahh, much better. This test now clearly communicates its purpose, without
-   distractions.
-
-   We also use a feature of mock to assert that get_watched_repos calls
-   call_api with the correct arguments.
-
-----
-
-.. code:: python
-
-   from unittest import mock
-   import json
-   import gitrecs
-
-   class FakeResponse:
-       def __init__(self, content):
-           self.content = content
-
-       def read(self):
-           return self.content
-
-   @mock.patch('gitrecs.urlopen')
-   def test_call_api(urlopen):
-       data = {'some': 'data'}
-       content = json.dumps(data).encode('utf-8')
-       urlopen.return_value = FakeResponse(content)
-
-       returned = gitrecs.call_api('/some/path')
-
-       assert returned == data
-       urlopen.assert_called_with(
-           'https://api.github.com/some/path')
-
-.. note::
-
-   For completeness, here's what the test for ``call_api`` would look
-   like. Note that this test no longer does anything with the actual data
-   returned from the API call, so we really only need this one test with all
-   the FakeResponse stuff; we may need many tests for different API calls, and
-   they can all omit that complexity.
-
-   We have lost something with this change, though - if the signature of
-   ``call_api`` changes, we could change this test and our tests would still
-   pass, even though ``get_watched_repos`` is now calling it with the wrong
-   arguments. We are now testing both ``call_api`` and ``get_watched_repos`` in
-   isolation; we are not testing that their integration - that they work
-   together correctly.
-
-----
-
 :data-reveal: 1
 
 Unit tests
@@ -932,16 +643,23 @@ Unit tests
 
 * Test one "unit" of code (function or method).
 
-* Isolated from complexities of collaborators.
+* Isolated (maybe not 100%).
 
 * Small & fast!
+
+* Focused: informative failures.
+
+* Require more refactoring with code changes.
 
 Integration tests
 -----------------
 
 * Test that components talk to each other correctly.
 
-* Slower.
+* Slower; exercise more code.
+
+* "Black box" end-to-end tests also called "system tests", "functional tests",
+  "acceptance tests."
 
 
 .. note::
@@ -957,43 +675,33 @@ Integration tests
    Integration.
 
    * Can be at various levels: testing integration of two different
-     methods/classes, up to end-to-end tests of the entire system (these are
-     sometimes called acceptance tests).
+     methods/classes, up to end-to-end tests of the entire system.
 
-   * Exercise more code; may also exercise external systems (e.g. database) and
-     require more setup.
+   * Exercise more code; may also exercise external systems (e.g. database)
+     that slow tests down.
 
 ----
 
 :data-reveal: 1
 
-Use unit tests for
-------------------
+Workflows for testing
+=====================
 
-* Checking correctness of algorithms, data structures.
+Making testing a habit instead of a chore.
 
-* Testing edge cases and error cases, covering all sides of conditionals.
+* Test first or test last?
 
-* You can write lots, they're small & fast!
-
-
-Use integration tests for
--------------------------
-
-* Checking integration of components.
-
-* Checking integration with external systems.
-
-* In a web app, often HTTP request/response tests.
-
-* Don't write one when a unit test would suffice.
+* Test-first is more fun!
 
 .. note::
 
-   E.g. if your similarity function breaks with two empty sets, like we saw at
-   the beginning of the talk, write a unit test for your similarity function,
-   not an integration test that sets up two fake github users watching no repos
-   and runs through everything.
+   Too much religion around this question. Tests will help you no matter when
+   you write them.
+
+   First you formulate clearly what you want your code to do, then you get to
+   write code and get the satisfaction of seeing the test pass. Psychology of
+   test-last is all wrong: first you get it working, then writing tests feels
+   like a chore.
 
 ----
 
@@ -1002,7 +710,7 @@ Use integration tests for
 A feature-adding workflow
 -------------------------
 
-* Write an integration test describing the working feature.
+* Write a system test describing the working feature.
 
 * Start implementation from the outside in.
 
@@ -1011,19 +719,44 @@ A feature-adding workflow
 * For each stubbed function, write unit tests describing how it should actually
   work and complete the implementation to make those tests pass.
 
-* Spikes: when you need to just write a bunch of exploratory code to figure out
-  the problem.
+----
+
+Programming by wish
+-------------------
+
+.. ignore-next-block
+.. code:: python
+
+    def recommend_repos_for(username):
+        my_watched = get_watched_repos(username)
+
+        ...
+
+    def get_watched_repos(username):
+        # stub
+        return {'pypa/pip', 'pypa/virtualenv'}
+
+----
+
+:data-reveal: 1
+
+The "spike" workflow
+--------------------
+
+When you need to write a bunch of exploratory code to figure out the problem
+space.
+
+* Strict TDD says delete your spikes and rewrite them test-first.
+
+* Try it; difference in second version can be illuminating!
+
+* ...but I usually don't.
 
 .. note::
 
-   The question always arises: write your tests first or last? You'll get
-   benefit from your tests either way, so do whatever works. I like writing
-   tests first.
-
-   Spikes: the test-driven development religion says when you're done with a
-   spike, you delete it and rewrite with test-first development, using the
-   knowledge you gained from the spike. TBH, I don't usually do this, I just
-   add tests and refactor the spiked code as I go to make it more testable.
+   To write tests, you have to have some idea of the shape of the code you need
+   to write. Sometimes for an unfamiliar problem space you have to write the
+   code first to learn about what kind of shape it needs.
 
 ----
 
@@ -1034,8 +767,7 @@ A bug-fixing workflow
 
 * Write a test that fails because of the bug (a regression test).
 
-* Should be a unit test, unless the bug is due to bad interaction between
-  components that are individually working correctly.
+* Focus the test (don't exercise more code than needed to highlight the bug).
 
 * Fix the code so the test passes.
 
@@ -1056,7 +788,7 @@ A retrofitting workflow
 
 * You have a codebase without tests. It probably isn't structured for testability.
 
-* Start with integration tests verifying the features you care most about.
+* Start with system tests verifying the features you care most about.
 
 * Even if you stop there, you still win!
 
@@ -1113,13 +845,19 @@ See also:
 
   .. _tox: http://tox.readthedocs.org
 
+* `mock`_: easily create fakes for testing (and monkeypatch them into place, if
+  needed).
+
+.. _mock: http://www.voidspace.org.uk/python/mock/
+
+
 * `WebTest`_: request/response testing for WSGI web apps.
 
   .. _WebTest: http://webtest.pythonpaste.org
 
-* `lettuce`_: write integration tests in English (Python port of Ruby's Cucumber).
+* `Selenium`_: browser automation (system tests for web apps).
 
-  .. _lettuce: http://pythonhosted.org/lettuce/
+  .. _Selenium: http://seleniumhq.org/
 
 .. note::
 
@@ -1134,14 +872,6 @@ See also:
 
    * If you're writing a web app, a lot of your integration tests will be "send
      a request, check the response" - WebTest is a great tool for these tests.
-
-   * Often integration tests for big systems get kind of long; they have to do
-     a fair bit of setup and it isn't trivial to make the assertions you want
-     to make. You can address this with utility functions and classes, but
-     there are also tools (part of a methodology called "Behavior Driven
-     Development") that let you write your acceptance tests in English phrases,
-     and define the meaning of those phrases in code. Some people like it, some
-     don't; you can try out "lettuce" and see what you think.
 
 ----
 
@@ -1175,19 +905,21 @@ Coding with tests...
 Questions?
 ==========
 
-* `oddbird.github.com/start-testing`_
+* `oddbird.net/start-testing-preso`_
 * `pytest.org`_
 * `nedbatchelder.com/code/coverage/`_
 * `www.voidspace.org.uk/python/mock/`_
 * `tox.readthedocs.org`_
 * `webtest.pythonpaste.org`_
+* `seleniumhq.org`_
 
-.. _oddbird.github.com/start-testing: http://oddbird.github.com/start-testing
+.. _oddbird.net/start-testing-preso: http://oddbird.net/start-testing-preso
 .. _pytest.org: http://pytest.org/
 .. _nedbatchelder.com/code/coverage/: http://nedbatchelder.com/code/coverage/
 .. _www.voidspace.org.uk/python/mock/: http://www.voidspace.org.uk/python/mock/
 .. _tox.readthedocs.org: http://tox.readthedocs.org
 .. _webtest.pythonpaste.org: http://webtest.pythonpaste.org
+.. _seleniumhq.org: http://seleniumhq.org
 
 |hcard|
 
