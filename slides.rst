@@ -576,7 +576,7 @@ Harder to test
            self.watched = watched
 
        def get_watched_repos(self):
-           return watched
+           return self.watched
 
    def test_empty():
        assert similarity(
