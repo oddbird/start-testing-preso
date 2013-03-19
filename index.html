@@ -191,7 +191,7 @@ wrote. The first version looked more like this.</p><p>Imagine writing tests for 
         <span class="bp">self</span><span class="o">.</span><span class="n">watched</span> <span class="o">=</span> <span class="n">watched</span>
 
     <span class="k">def</span> <span class="nf">get_watched_repos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">watched</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">watched</span>
 
 <span class="k">def</span> <span class="nf">test_empty</span><span class="p">():</span>
     <span class="k">assert</span> <span class="n">similarity</span><span class="p">(</span>
