@@ -4,6 +4,6 @@ Getting started testing
 A presentation for PyCon 2013.
 
 To view the slides, load ``output/index.html`` in your browser or visit
-`carljm.github.com/start-testing`_.
+`oddbird.net/start-testing-preso`_.
 
-.. _carljm.github.com/start-testing: http://carljm.github.com/start-testing
+.. _oddbird.net/start-testing-preso: http://oddbird.net/start-testing-preso
