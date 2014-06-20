@@ -193,13 +193,13 @@ Did we break anything?
 
 .. code:: python
 
-   >>> similarity({'a', 'b'}, {'b', 'c', 'd'})
+   >>> similarity(['a', 'b'], ['b', 'c', 'd'])
    0.25
 
-   >>> similarity({'a', 'b', 'c'}, {'b', 'c', 'd'})
+   >>> similarity(['a', 'b', 'c'], ['b', 'c', 'd'])
    0.5
 
-   >>> similarity({'a', 'b', 'c'}, {'d'})
+   >>> similarity(['a', 'b', 'c'], ['d'])
    0.0
 
 .. note::
@@ -260,7 +260,7 @@ test_gitrecs.py
 
    from gitrecs import similarity
 
-   assert similarity({'a', 'b'}, {'b', 'c', 'd'}) == 0.25
+   assert similarity(['a', 'b'], ['b', 'c', 'd']) == 0.25
    assert similarity(['a', 'a'], ['a', 'b']) == 0.5
 
 .. note::
@@ -279,8 +279,8 @@ A bug!
 
    from gitrecs import similarity
 
-   assert similarity({}, {}) == 0.0
-   assert similarity({'a', 'b'}, {'b', 'c', 'd'}) == 0.25
+   assert similarity([], []) == 0.0
+   assert similarity(['a', 'b'], ['b', 'c', 'd']) == 0.25
    assert similarity(['a', 'a'], ['a', 'b']) == 0.5
 
 ::
@@ -305,10 +305,10 @@ A bug!
 .. code:: python
 
    def test_empty():
-       assert similarity({}, {}) == 0.0
+       assert similarity([], []) == 0.0
 
    def test_sets():
-       assert similarity({'a', 'b'}, {'b', 'c', 'd'}) == 0.25
+       assert similarity(['a', 'b'], ['b', 'c', 'd']) == 0.25
 
    def test_list_with_dupes():
        assert similarity(['a', 'a'], ['a', 'b']) == 0.5
@@ -347,10 +347,10 @@ pip install pytest
    from gitrecs import similarity
 
    def test_empty():
-       assert similarity({}, {}) == 0.0
+       assert similarity([], []) == 0.0
 
    def test_sets():
-       assert similarity({'a', 'b'}, {'b', 'c', 'd'}) == 0.25
+       assert similarity(['a', 'b'], ['b', 'c', 'd']) == 0.25
 
    def test_list_with_dupes():
        assert similarity(['a', 'a'], ['a', 'b']) == 0.5
@@ -375,7 +375,7 @@ pip install pytest
    _______________________ test_empty ________________________
 
        def test_empty():
-   >       assert similarity({}, {}) == 0.0
+   >       assert similarity([], []) == 0.0
 
    test_gitrecs.py:4:
    _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
@@ -493,11 +493,11 @@ A unittest test
 
    class TestSimilarity(TestCase):
        def test_empty(self):
-           score = similarity({}, {})
+           score = similarity([], [])
            self.assertEqual(score, 0.0)
 
        def test_sets(self):
-           score = similarity({'a'}, {'a', 'b'})
+           score = similarity(['a'], ['a', 'b'])
            self.assertEqual(score, 0.5)
 
        def test_list_with_dupes(self):
@@ -580,14 +580,14 @@ Harder to test
 
    def test_empty():
        assert similarity(
-           FakeGithubUser({}),
-           FakeGithubUser({})
+           FakeGithubUser([]),
+           FakeGithubUser([])
            ) == 0.5
 
    def test_sets():
        assert similarity(
-           FakeGithubUser({'a'}),
-           FakeGithubUser({'a', 'b'})
+           FakeGithubUser(['a']),
+           FakeGithubUser(['a', 'b'])
            ) == 0.5
 
 .. note::
@@ -734,7 +734,7 @@ Programming by wish
 
     def get_watched_repos(username):
         # stub
-        return {'pypa/pip', 'pypa/virtualenv'}
+        return ['pypa/pip', 'pypa/virtualenv']
 
 ----
 
